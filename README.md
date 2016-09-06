@@ -33,6 +33,12 @@ $ ant jar
 $ ant package
 ```
 
+### install package
+
+```
+
+```
+
 ### Show help
 
 ```
