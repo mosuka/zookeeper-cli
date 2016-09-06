@@ -22,9 +22,9 @@ public class ZooKeeperNonInteractiveCLI {
      */
     ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
     argumentParser.addArgument("-z", "--zookeeper-server").type(String.class)
-        .setDefault("localhost:2181").help("ZooKeeper host and port.");
+        .setDefault("localhost:2181").help("specify ZooKeeper host and port. ex) localhost:2181");
     argumentParser.addArgument("-t", "--session-timeout").type(Integer.class).setDefault(3000)
-        .help("Session timeout.");
+        .help("specify session timeout[ms].");
 
     /*
      * Sub commands
@@ -38,11 +38,11 @@ public class ZooKeeperNonInteractiveCLI {
     Subparser lsCommandSubParser = commandSubpersers.addParser("ls").help("List the znodes.")
         .setDefault("command", new LsCommand());
     lsCommandSubParser.addArgument("path").metavar("PATH").type(String.class).setDefault("/")
-        .help("ZooKeeper znode path.");
+        .help("specify ZooKeeper znode path.");
     lsCommandSubParser.addArgument("-w", "--watch").type(Boolean.class).setDefault(false)
-        .action(storeTrue()).help("Use watch.");
+        .action(storeTrue()).help("enable watcher.");
     lsCommandSubParser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(false)
-        .action(storeTrue()).help("With stat.");
+        .action(storeTrue()).help("gets the stat along with the data.");
 
     /*
      * execute command

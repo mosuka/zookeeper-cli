@@ -37,10 +37,14 @@ $ ant package
 
 ```
 $ ./bin/zkCli.sh -h
-usage: java zookeeper-cli.jar [-h] COMMAND ...
+usage: java zookeeper-cli.jar [-h] [-z ZOOKEEPER_SERVER] [-t SESSION_TIMEOUT] COMMAND ...
 
 optional arguments:
   -h, --help             show this help message and exit
+  -z ZOOKEEPER_SERVER, --zookeeper-server ZOOKEEPER_SERVER
+                         specify ZooKeeper host and port. ex) localhost:2181
+  -t SESSION_TIMEOUT, --session-timeout SESSION_TIMEOUT
+                         specify session timeout[ms].
 
 Available Commands:
   COMMAND
@@ -51,17 +55,13 @@ Available Commands:
 
 ```
 $ ./bin/zkCli.sh ls -h
-usage: java zookeeper-cli.jar ls [-h] [-z ZOOKEEPER_SERVER] [-p PATH] [-w WATCH] [-s WITH_STAT] [-t SESSION_TIMEOUT]
+usage: java zookeeper-cli.jar ls [-h] [-w] [-s] PATH
+
+positional arguments:
+  PATH                   specify ZooKeeper znode path.
 
 optional arguments:
   -h, --help             show this help message and exit
-  -z ZOOKEEPER_SERVER, --zookeeper-server ZOOKEEPER_SERVER
-                         ZooKeeper host and port.
-  -p PATH, --path PATH   ZooKeeper znode path.
-  -w WATCH, --watch WATCH
-                         Use watch.
-  -s WITH_STAT, --with-stat WITH_STAT
-                         With stat.
-  -t SESSION_TIMEOUT, --session-timeout SESSION_TIMEOUT
-                         Session timeout.
+  -w, --watch            enable watcher.
+  -s, --with-stat        gets the stat along with the data.
 ```
