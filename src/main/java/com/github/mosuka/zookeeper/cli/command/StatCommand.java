@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mosuka.zookeeper.cli;
+package com.github.mosuka.zookeeper.cli.command;
 
-import junit.framework.TestCase;
+public class StatCommand extends Command {
 
-public class ZooKeeperNonInteractiveCLITest extends TestCase {
+  public StatCommand() {
+    this("stat");
+  }
 
-  public void testCreateDocument() {
-    assertEquals("aaa", "aaa");
+  public StatCommand(String name) {
+    super(name);
   }
 
 }

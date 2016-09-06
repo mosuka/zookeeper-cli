@@ -1,6 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.mosuka.zookeeper.cli.command;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,10 +24,8 @@ import java.util.Map;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import com.github.mosuka.zookeeper.cli.util.StatUtil;
-import com.github.mosuka.zookeeper.cli.util.ZooKeeperConnection;
 
 public class LsCommand extends Command {
   public LsCommand() {
@@ -24,81 +37,36 @@ public class LsCommand extends Command {
   }
 
   @Override
-  public void execute(Map<String, Object> parameters) {
-    int exitCode = 0;
-    String message = "OK";
+  public void run(Map<String, Object> parameters) {
     List<String> children = new ArrayList<String>();
     Map<String, Object> statMap = new LinkedHashMap<String, Object>();
 
-    String zookeeperServer = (String) parameters.get("zookeeper_server");
-    int sessionTimeout = (Integer) parameters.get("session_timeout");
     String path = (String) parameters.get("path");
     boolean watch = (Boolean) parameters.get("watch");
     boolean withStat = (Boolean) parameters.get("with_stat");
 
-    ZooKeeperConnection zookeeperConnection = null;
     try {
-      zookeeperConnection = new ZooKeeperConnection();
-      ZooKeeper zookeeper = zookeeperConnection.connect(zookeeperServer, sessionTimeout);
+      ZooKeeper zookeeper = getZookeeperConnection().getZooKeeper();
 
       if (withStat) {
-        // with stat
         Stat stat = new Stat();
         children = zookeeper.getChildren(path, watch, stat);
         statMap = StatUtil.stat2Map(stat);
       } else {
-        // without stat
         children = zookeeper.getChildren(path, watch);
       }
-    } catch (IOException e) {
-      exitCode = 1;
-      message = e.getMessage();
-    } catch (KeeperException e) {
-      exitCode = 1;
-      message = e.getMessage();
-    } catch (InterruptedException e) {
-      exitCode = 1;
-      message = e.getMessage();
-    } catch (Exception e) {
-      exitCode = 1;
-      message = e.getMessage();
-    } finally {
-      try {
-        if (zookeeperConnection != null) {
-          zookeeperConnection.close();
-        }
-      } catch (InterruptedException e) {
-        exitCode = 1;
-        message = e.getMessage();
+
+      addResponse("children", children);
+      if (!statMap.isEmpty()) {
+        addResponse("stat", statMap);
       }
-    }
 
-    Map<String, Object> requestMap = new LinkedHashMap<String, Object>();
-    requestMap.put("command", getName());
-    requestMap.put("parameters", parameters);
-
-    Map<String, Object> responseMap = new LinkedHashMap<String, Object>();
-    responseMap.put("status", exitCode);
-    responseMap.put("message", message);
-    responseMap.put("children", children);
-    if (!statMap.isEmpty()) {
-      responseMap.put("stat", statMap);
+      setExitCode(0);
+      setMessage("OK");
+    } catch (KeeperException | InterruptedException e) {
+      setExitCode(1);
+      setMessage(e.getMessage());
     }
-
-    String resultJSON = null;
-    try {
-      Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-      resultMap.put("request", requestMap);
-      resultMap.put("response", responseMap);
-      ObjectMapper mapper = new ObjectMapper();
-      resultJSON = mapper.writeValueAsString(resultMap);
-    } catch (IOException e) {
-      exitCode = 1;
-      message = e.getMessage();
-      resultJSON = String.format("{\"status\":%d, \"message\":\"%s\"}", exitCode, e.getMessage());
-    }
-    System.out.println(resultJSON);
-    System.exit(exitCode);
   }
 
 }
