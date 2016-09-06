@@ -29,6 +29,7 @@
   <property name="test.target.dir" value="test-target" />
   <property name="test.build.dir" value="${test.target.dir}/classes" />
 
+  <property name="bin.dir" value="bin" />
   <property name="lib.dir" value="lib" />
   <property name="src.dir" value="src/main/java" />
   <property name="resources.dir" value="src/main/resources" />
@@ -83,7 +84,6 @@
   <target name="test" description="Test project.">
     <mkdir dir="${test.build.dir}" />
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false" classpathref="compile.test.classpath" />
-  	
     <junit fork="true" printsummary="true" maxmemory="512m" haltonfailure="yes">
       <formatter type="plain" usefile="false" />
       <classpath refid="run.test.classpath" />
@@ -95,13 +95,13 @@
 
   <target name="jar" description="Create JAR files.">
     <mkdir dir="${dist.dir}" />
-    <copy todir="${dist.dir}/lib">
+    <copy todir="${dist.dir}/${project}-${version}/lib">
       <fileset dir="${lib.dir}" />
     </copy>
     <pathconvert property="manifest.classpath" refid="run.classpath" targetos="unix" pathsep=" ">
         <map from="${basedir}/${lib.dir}" to="./lib" />
     </pathconvert>
-    <jar destfile="${dist.dir}/${project}.jar" basedir="${build.dir}">
+    <jar destfile="${dist.dir}/${project}-${version}/${project}-${version}.jar" basedir="${build.dir}">
       <manifest>
         <attribute name="Main-Class" value="com.github.mosuka.zookeeper.cli.ZooKeeperNonInteractiveCLI"/>
         <attribute name="Class-Path"  value="${manifest.classpath}"/>
@@ -111,13 +111,19 @@
 
   <target name="package" description="Create package.">
     <mkdir dir="${package.dir}" />
+  	<copy file="README.md" todir="${dist.dir}/${project}-${version}"/>
+  	<copy file="LICENSE" todir="${dist.dir}/${project}-${version}"/>
+    <copy todir="${dist.dir}/${project}-${version}/bin">
+      <fileset dir="${bin.dir}" />
+    </copy>
+  	<chmod file="${dist.dir}/${project}-${version}/bin/*.sh" perm="755"/>
     <tar destfile="${package.dir}/${project}-${version}.tgz" compression="gzip" longfile="gnu">
       <tarfileset dir="${dist.dir}" includes="**" />
     </tar>
   </target>
 
   <target name="run" description="Run application.">
-    <java jar="${dist.dir}/${project}.jar" fork="true">
+    <java jar="${dist.dir}/${project}-${version}/${project}-${version}.jar" fork="true">
       <arg value="-h" />
     </java>
   </target>

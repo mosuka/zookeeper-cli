@@ -14,18 +14,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.github.mosuka.zookeeper.cli.util.StatUtil;
 import com.github.mosuka.zookeeper.cli.util.ZooKeeperConnection;
 
-public class LsCommand implements Command {
-  private static String name;
-  private static ZooKeeper zookeeper;
-  private static ZooKeeperConnection zookeeperConnection;
-
+public class LsCommand extends Command {
   public LsCommand() {
-    name = "ls";
+    this("ls");
   }
 
-  @Override
-  public String getName() {
-    return name;
+  public LsCommand(String name) {
+    super(name);
   }
 
   @Override
@@ -41,9 +36,10 @@ public class LsCommand implements Command {
     boolean watch = Boolean.parseBoolean((String) parameters.get("watch"));
     boolean withStat = Boolean.parseBoolean((String) parameters.get("with_stat"));
 
+    ZooKeeperConnection zookeeperConnection = null;
     try {
       zookeeperConnection = new ZooKeeperConnection();
-      zookeeper = zookeeperConnection.connect(zookeeperServer, sessionTimeout);
+      ZooKeeper zookeeper = zookeeperConnection.connect(zookeeperServer, sessionTimeout);
 
       if (withStat) {
         // with stat
@@ -68,7 +64,9 @@ public class LsCommand implements Command {
       message = e.getMessage();
     } finally {
       try {
-        zookeeperConnection.close();
+        if (zookeeperConnection != null) {
+          zookeeperConnection.close();
+        }
       } catch (InterruptedException e) {
         exitCode = 1;
         message = e.getMessage();

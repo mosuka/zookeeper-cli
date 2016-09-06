@@ -2,7 +2,7 @@ package com.github.mosuka.zookeeper.cli;
 
 import java.util.Map;
 
-import com.github.mosuka.zookeeper.cli.command.Command;
+import com.github.mosuka.zookeeper.cli.command.CommandImpl;
 import com.github.mosuka.zookeeper.cli.command.LsCommand;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -32,7 +32,7 @@ public class ZooKeeperNonInteractiveCLI {
 
     try {
       Namespace ns = argumentParser.parseArgs(args);
-      Command command = ns.get("command");
+      CommandImpl command = ns.get("command");
       Map<String, Object> parameters = ns.getAttrs();
       parameters.remove("command");
       command.execute(parameters);
