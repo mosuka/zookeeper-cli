@@ -19,7 +19,6 @@ hs_err_pid*
 .settings/
 
 *.tgz
-/bin/
 /target/
 /test-target/
 /lib/

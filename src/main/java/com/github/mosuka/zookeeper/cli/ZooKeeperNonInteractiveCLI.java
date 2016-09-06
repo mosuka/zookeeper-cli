@@ -18,7 +18,6 @@ package com.github.mosuka.zookeeper.cli;
 
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.github.mosuka.zookeeper.cli.command.CommandImpl;
@@ -37,29 +36,34 @@ public class ZooKeeperNonInteractiveCLI {
     /*
      * Main command
      */
-    ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
+    ArgumentParser argumentParser =
+        ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
     argumentParser.addArgument("-z", "--zookeeper-server").type(String.class)
-        .setDefault("localhost:2181").help("specify ZooKeeper host and port. ex) localhost:2181");
-    argumentParser.addArgument("-t", "--session-timeout").type(Integer.class).setDefault(3000)
-        .help("specify session timeout[ms].");
+        .setDefault("localhost:2181")
+        .help("specify ZooKeeper host and port. ex) localhost:2181");
+    argumentParser.addArgument("-t", "--session-timeout").type(Integer.class)
+        .setDefault(3000).help("specify session timeout[ms].");
+    argumentParser.addArgument("-p", "--pretty-print").type(Boolean.class)
+        .setDefault(false).action(storeTrue()).help("pretty print.");
 
     /*
      * Sub commands
      */
-    Subparsers commandSubpersers =
-        argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
+    Subparsers commandSubpersers = argumentParser.addSubparsers()
+        .title("Available Commands").metavar("COMMAND");
 
     /*
      * ls command
      */
-    Subparser lsCommandSubParser = commandSubpersers.addParser("ls").help("List the znodes.")
-        .setDefault("command", new LsCommand());
-    lsCommandSubParser.addArgument("path").metavar("PATH").type(String.class).setDefault("/")
-        .help("specify ZooKeeper znode path.");
-    lsCommandSubParser.addArgument("-w", "--watch").type(Boolean.class).setDefault(false)
-        .action(storeTrue()).help("enable watcher.");
-    lsCommandSubParser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(false)
-        .action(storeTrue()).help("gets the stat along with the data.");
+    Subparser lsCommandSubParser = commandSubpersers.addParser("ls")
+        .help("List the znodes.").setDefault("command", new LsCommand());
+    lsCommandSubParser.addArgument("path").metavar("PATH").type(String.class)
+        .setDefault("/").help("specify ZooKeeper znode path.");
+    lsCommandSubParser.addArgument("-w", "--watch").type(Boolean.class)
+        .setDefault(false).action(storeTrue()).help("enable watcher.");
+    lsCommandSubParser.addArgument("-s", "--with-stat").type(Boolean.class)
+        .setDefault(false).action(storeTrue())
+        .help("gets the stat along with the data.");
 
     /*
      * execute command
@@ -73,7 +77,7 @@ public class ZooKeeperNonInteractiveCLI {
     } catch (ArgumentParserException e) {
       argumentParser.handleError(e);
       System.exit(1);
-    } catch (IOException | InterruptedException e) {
+    } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);
     }

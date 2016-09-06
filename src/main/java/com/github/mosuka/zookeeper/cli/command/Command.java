@@ -21,10 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.mosuka.zookeeper.cli.util.ZooKeeperConnection;
 
 public class Command implements CommandImpl {
@@ -81,7 +81,8 @@ public class Command implements CommandImpl {
 
   public void connect(String zookeeperServer, int sessionTimeout)
       throws IOException, InterruptedException {
-    zookeeperConnection = new ZooKeeperConnection(zookeeperServer, sessionTimeout);
+    zookeeperConnection =
+        new ZooKeeperConnection(zookeeperServer, sessionTimeout);
   }
 
   public void run(Map<String, Object> parameters) {
@@ -101,7 +102,12 @@ public class Command implements CommandImpl {
     Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
     resultMap.put("request", requestMap);
     resultMap.put("response", responseMap);
+
     ObjectMapper mapper = new ObjectMapper();
+    if ((Boolean) parameters.get("pretty_print")) {
+      mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
+
     resultJSON = mapper.writeValueAsString(resultMap);
     System.out.println(resultJSON);
   }
