@@ -21,3 +21,9 @@ hs_err_pid*
 *.tgz
 /bin/
 /target/
+/test-target/
+/lib/
+/test-lib/
+/dist/
+/package/
+

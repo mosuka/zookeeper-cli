@@ -28,6 +28,10 @@
   
   <dependencies>
     <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.4.6" conf="compile" />
+    
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1" conf="compile" />
+    <dependency org="org.slf4j" name="slf4j-api" rev="1.6.1" conf="compile" />
+    <dependency org="log4j" name="log4j" rev="1.2.16" conf="compile" />
 
     <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13" conf="compile" />
     <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13" conf="compile" />

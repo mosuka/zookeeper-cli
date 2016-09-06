@@ -31,6 +31,7 @@
 
   <property name="lib.dir" value="lib" />
   <property name="src.dir" value="src/main/java" />
+  <property name="resources.dir" value="src/main/resources" />
 
   <property name="test.lib.dir" value="test-lib" />
   <property name="test.src.dir" value="src/test/java" />
@@ -76,6 +77,7 @@
   <target name="compile" description="Compile project.">
     <mkdir dir="${build.dir}" />
     <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" classpathref="compile.classpath" />
+    <copy file="${resources.dir}/log4j.properties" todir="${build.dir}"/>
   </target>
 
   <target name="test" description="Test project.">
