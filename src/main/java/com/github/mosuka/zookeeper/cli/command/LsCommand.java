@@ -1,4 +1,4 @@
-package com.github.mosuka.zookeeper.cli.cmd;
+package com.github.mosuka.zookeeper.cli.command;
 
 import java.io.IOException;
 import java.util.ArrayList;

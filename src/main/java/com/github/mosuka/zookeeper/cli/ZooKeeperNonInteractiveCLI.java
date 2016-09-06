@@ -2,8 +2,8 @@ package com.github.mosuka.zookeeper.cli;
 
 import java.util.Map;
 
-import com.github.mosuka.zookeeper.cli.cmd.Command;
-import com.github.mosuka.zookeeper.cli.cmd.LsCommand;
+import com.github.mosuka.zookeeper.cli.command.Command;
+import com.github.mosuka.zookeeper.cli.command.LsCommand;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
