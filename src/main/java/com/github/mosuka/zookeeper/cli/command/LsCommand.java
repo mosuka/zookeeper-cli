@@ -31,10 +31,10 @@ public class LsCommand extends Command {
     Map<String, Object> statMap = new LinkedHashMap<String, Object>();
 
     String zookeeperServer = (String) parameters.get("zookeeper_server");
-    int sessionTimeout = Integer.parseInt((String) parameters.get("session_timeout"));
+    int sessionTimeout = (Integer) parameters.get("session_timeout");
     String path = (String) parameters.get("path");
-    boolean watch = Boolean.parseBoolean((String) parameters.get("watch"));
-    boolean withStat = Boolean.parseBoolean((String) parameters.get("with_stat"));
+    boolean watch = (Boolean) parameters.get("watch");
+    boolean withStat = (Boolean) parameters.get("with_stat");
 
     ZooKeeperConnection zookeeperConnection = null;
     try {

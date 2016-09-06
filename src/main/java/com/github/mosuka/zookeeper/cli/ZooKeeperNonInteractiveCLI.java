@@ -1,5 +1,7 @@
 package com.github.mosuka.zookeeper.cli;
 
+import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
+
 import java.util.Map;
 
 import com.github.mosuka.zookeeper.cli.command.CommandImpl;
@@ -15,21 +17,36 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 public class ZooKeeperNonInteractiveCLI {
 
   public static void main(String[] args) {
+    /*
+     * Main command
+     */
     ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
+    argumentParser.addArgument("-z", "--zookeeper-server").type(String.class)
+        .setDefault("localhost:2181").help("ZooKeeper host and port.");
+    argumentParser.addArgument("-t", "--session-timeout").type(Integer.class).setDefault(3000)
+        .help("Session timeout.");
 
+    /*
+     * Sub commands
+     */
     Subparsers commandSubpersers =
         argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 
-    Subparser addCmdSubParser = commandSubpersers.addParser("ls").help("List the znodes.")
+    /*
+     * ls command
+     */
+    Subparser lsCommandSubParser = commandSubpersers.addParser("ls").help("List the znodes.")
         .setDefault("command", new LsCommand());
-    addCmdSubParser.addArgument("-z", "--zookeeper-server").setDefault("localhost:2181")
-        .help("ZooKeeper host and port.");
-    addCmdSubParser.addArgument("-p", "--path").setDefault("/").help("ZooKeeper znode path.");
-    addCmdSubParser.addArgument("-w", "--watch").setDefault("false").help("Use watch.");
-    addCmdSubParser.addArgument("-s", "--with-stat").setDefault("false").help("With stat.");
-    addCmdSubParser.addArgument("-t", "--session-timeout").setDefault("3000")
-        .help("Session timeout.");
+    lsCommandSubParser.addArgument("path").metavar("PATH").type(String.class).setDefault("/")
+        .help("ZooKeeper znode path.");
+    lsCommandSubParser.addArgument("-w", "--watch").type(Boolean.class).setDefault(false)
+        .action(storeTrue()).help("Use watch.");
+    lsCommandSubParser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(false)
+        .action(storeTrue()).help("With stat.");
 
+    /*
+     * execute command
+     */
     try {
       Namespace ns = argumentParser.parseArgs(args);
       CommandImpl command = ns.get("command");
