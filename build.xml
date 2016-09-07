@@ -83,6 +83,7 @@
   <target name="test" description="Test project.">
     <mkdir dir="${test.build.dir}" />
     <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false" classpathref="compile.test.classpath" />
+  	<copy file="${conf.dir}/log4j.properties" todir="${test.build.dir}"/>
     <junit fork="true" printsummary="true" maxmemory="512m" haltonfailure="yes">
       <formatter type="plain" usefile="false" />
       <classpath refid="run.test.classpath" />

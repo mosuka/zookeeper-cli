@@ -30,4 +30,13 @@ ZOOBIN="${BASH_SOURCE-$0}"
 ZOOBIN="$(dirname "${ZOOBIN}")"
 ZOOBINDIR="$(cd "${ZOOBIN}"; pwd)"
 
-${JAVA_HOME}/bin/java  -Dlog4j.configuration="file://${ZOOBINDIR}/../conf/log4j.properties" -jar "${ZOOBINDIR}/../zookeeper-cli-0.1.0.jar" "$@"
+ZOO_LOG_DIR="${ZOOBINDIR}/../logs"
+ZOO_LOG4J_PROP_FILE="file://${ZOOBINDIR}/../conf/log4j.properties"
+ZOO_LOG_FILE="zookeeper-$USER-cli-$HOSTNAME.log"
+ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
+
+${JAVA_HOME}/bin/java -Dzookeeper.log.dir="${ZOO_LOG_DIR}" \
+                      -Dzookeeper.root.logger="${ZOO_LOG4J_PROP}" \
+                      -Dzookeeper.log.file="${ZOO_LOG_FILE}" \
+                      -Dlog4j.configuration="${ZOO_LOG4J_PROP_FILE}" \
+                      -jar "${ZOOBINDIR}/../zookeeper-cli-0.1.0.jar" "$@"
