@@ -45,5 +45,5 @@ ZooKeeper -server host:port cmd args
  */
 
 public interface CommandImpl {
-  void execute(Map<String, Object> parameters) throws Exception;
+  int execute(Map<String, Object> parameters) throws Exception;
 }

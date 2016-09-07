@@ -20,6 +20,7 @@ import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.util.Map;
 
+import com.github.mosuka.zookeeper.cli.command.Command;
 import com.github.mosuka.zookeeper.cli.command.CommandImpl;
 import com.github.mosuka.zookeeper.cli.command.LsCommand;
 
@@ -49,37 +50,40 @@ public class ZooKeeperNonInteractiveCLI {
     /*
      * Sub commands
      */
-    Subparsers commandSubpersers = argumentParser.addSubparsers()
+    Subparsers subpersers = argumentParser.addSubparsers()
         .title("Available Commands").metavar("COMMAND");
 
     /*
      * ls command
      */
-    Subparser lsCommandSubParser = commandSubpersers.addParser("ls")
+    Subparser lsCommandSubparser = subpersers.addParser("ls")
         .help("List the znodes.").setDefault("command", new LsCommand());
-    lsCommandSubParser.addArgument("path").metavar("PATH").type(String.class)
+    lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
         .setDefault("/").help("specify ZooKeeper znode path.");
-    lsCommandSubParser.addArgument("-w", "--watch").type(Boolean.class)
+    lsCommandSubparser.addArgument("-w", "--watch").type(Boolean.class)
         .setDefault(false).action(storeTrue()).help("enable watcher.");
-    lsCommandSubParser.addArgument("-s", "--with-stat").type(Boolean.class)
+    lsCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class)
         .setDefault(false).action(storeTrue())
         .help("gets the stat along with the data.");
 
     /*
      * execute command
      */
+    int status = Command.STATUS_SUCCESS;
     try {
-      Namespace ns = argumentParser.parseArgs(args);
-      CommandImpl command = ns.get("command");
-      Map<String, Object> parameters = ns.getAttrs();
+      Namespace namespace = argumentParser.parseArgs(args);
+      CommandImpl command = namespace.get("command");
+      Map<String, Object> parameters = namespace.getAttrs();
       parameters.remove("command");
-      command.execute(parameters);
+      status = command.execute(parameters);
     } catch (ArgumentParserException e) {
       argumentParser.handleError(e);
-      System.exit(1);
+      status = Command.STATUS_ERROR;
     } catch (Exception e) {
       e.printStackTrace();
-      System.exit(1);
+      status = Command.STATUS_ERROR;
+    } finally {
+      System.exit(status);
     }
   }
 

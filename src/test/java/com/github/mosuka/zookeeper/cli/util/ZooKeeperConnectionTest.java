@@ -16,45 +16,32 @@
  */
 package com.github.mosuka.zookeeper.cli.util;
 
+import org.apache.zookeeper.ZooKeeper;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import junit.framework.Assert;
+public class ZooKeeperConnectionTest extends ZooKeeperTestBase {
 
-public class ZooKeeperConnectionTest extends Assert {
-
-  public static LocalZooKeeperServer zookeeperServer;
-
-  @BeforeClass
-  public static void beforeClass() throws Exception {
-    zookeeperServer = new LocalZooKeeperServer();
-    zookeeperServer.start();
-  }
-
-  @AfterClass
-  public static void afterClass() throws Exception {
-    zookeeperServer.close();
-  }
+  public ZooKeeperConnection zkConnection = null;
 
   @Before
   public void before() throws Exception {
+    super.before();
+    zkConnection = new ZooKeeperConnection(zkServerStr, sessionTimeout);
   }
 
   @After
   public void after() throws Exception {
+    super.after();
+    zkConnection.close();
   }
 
   @Test
-  public void test1() {
-    assertEquals("aaa", "aaa");
-  }
-
-  @Test
-  public void test2() {
-    assertEquals("bbb", "bbb");
+  public void testGetZooKeeper() {
+    ZooKeeper zk = zkConnection.getZooKeeper();
+    zk.getClass().getName();
+    assertEquals("org.apache.zookeeper.ZooKeeper", zk.getClass().getName());
   }
 
 }

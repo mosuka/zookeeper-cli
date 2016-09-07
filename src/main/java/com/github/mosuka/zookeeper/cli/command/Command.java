@@ -30,15 +30,15 @@ import com.github.mosuka.zookeeper.cli.util.ZooKeeperConnection;
 public class Command implements CommandImpl {
 
   public static final String SUCCESS_MESSAGE = "Success";
-  public static final int SUCCESS_EXIT_CODE = 0;
-  public static final int ERROR_EXIT_CODE = 1;
+  public static final int STATUS_SUCCESS = 0;
+  public static final int STATUS_ERROR = 1;
 
   private String name;
-  private int exitCode = SUCCESS_EXIT_CODE;
+  private int status = STATUS_SUCCESS;
   private String message = SUCCESS_MESSAGE;
 
-  final CountDownLatch connSignal = new CountDownLatch(1);
-  private ZooKeeperConnection zookeeperConnection = null;
+  final CountDownLatch countDownLatch = new CountDownLatch(1);
+  private ZooKeeperConnection zkConnection = null;
 
   private Map<String, Object> requestMap = new LinkedHashMap<String, Object>();
   private Map<String, Object> responseMap = new LinkedHashMap<String, Object>();
@@ -59,12 +59,12 @@ public class Command implements CommandImpl {
     this.name = name;
   }
 
-  public int getExitCode() {
-    return exitCode;
+  public int getStatus() {
+    return status;
   }
 
-  public void setExitCode(int exitCode) {
-    this.exitCode = exitCode;
+  public void setStatus(int status) {
+    this.status = status;
   }
 
   public String getMessage() {
@@ -76,7 +76,7 @@ public class Command implements CommandImpl {
   }
 
   public ZooKeeperConnection getZookeeperConnection() {
-    return zookeeperConnection;
+    return zkConnection;
   }
 
   public void addResponse(String key, Object value) {
@@ -85,11 +85,12 @@ public class Command implements CommandImpl {
 
   public void connect(String zookeeperServer, int sessionTimeout)
       throws IOException, InterruptedException {
-    zookeeperConnection = new ZooKeeperConnection(zookeeperServer, sessionTimeout);
+    zkConnection =
+        new ZooKeeperConnection(zookeeperServer, sessionTimeout);
   }
 
   public void run(Map<String, Object> parameters) {
-    setExitCode(SUCCESS_EXIT_CODE);
+    setStatus(STATUS_SUCCESS);
     setMessage(SUCCESS_MESSAGE);
   }
 
@@ -98,7 +99,7 @@ public class Command implements CommandImpl {
     requestMap.put("command", getName());
     requestMap.put("parameters", parameters);
 
-    responseMap.put("exitCode", getExitCode());
+    responseMap.put("status", getStatus());
     responseMap.put("message", getMessage());
 
     String resultJSON = null;
@@ -116,11 +117,11 @@ public class Command implements CommandImpl {
   }
 
   public void close() throws InterruptedException {
-    zookeeperConnection.close();
+    zkConnection.close();
   }
 
   @Override
-  public void execute(Map<String, Object> parameters) throws Exception {
+  public int execute(Map<String, Object> parameters) throws Exception {
     try {
       connect((String) parameters.get("zookeeper_server"),
           (Integer) parameters.get("session_timeout"));
@@ -128,12 +129,13 @@ public class Command implements CommandImpl {
       run(parameters);
       close();
     } catch (IOException | InterruptedException e) {
-      setExitCode(ERROR_EXIT_CODE);
+      setStatus(STATUS_ERROR);
       setMessage(e.getMessage());
     } finally {
       output(parameters);
-      System.exit(getExitCode());
     }
+
+    return getStatus();
   }
 
 }

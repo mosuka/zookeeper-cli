@@ -29,7 +29,7 @@ public class LocalZooKeeperServer implements Closeable {
 
   private int port;
   private Path dataDir;
-  private DatadirCleanupManager purgeManager;
+  private DatadirCleanupManager cleanupManager;
   private ZooKeeperServer zkServer;
   private FileTxnSnapLog transactionLog;
   private ServerCnxnFactory connectionFactory;
@@ -113,10 +113,10 @@ public class LocalZooKeeperServer implements Closeable {
     QuorumPeerConfig quorumConfig = new QuorumPeerConfig();
     quorumConfig.parseProperties(properties);
 
-    purgeManager =
+    cleanupManager =
         new DatadirCleanupManager(quorumConfig.getDataDir(), quorumConfig.getDataLogDir(),
             quorumConfig.getSnapRetainCount(), quorumConfig.getPurgeInterval());
-    purgeManager.start();
+    cleanupManager.start();
 
     ServerConfig serverConfig = new ServerConfig();
     serverConfig.readFrom(quorumConfig);
@@ -162,9 +162,9 @@ public class LocalZooKeeperServer implements Closeable {
       transactionLog.close();
       transactionLog = null;
     }
-    if (purgeManager != null) {
-      purgeManager.shutdown();
-      purgeManager = null;
+    if (cleanupManager != null) {
+      cleanupManager.shutdown();
+      cleanupManager = null;
     }
     cleanUpDataDir();
   }
