@@ -14,14 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mosuka.zookeeper.cli;
+package com.github.mosuka.zookeeper.cli.util;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class ZooKeeperNonInteractiveCLITest extends TestCase {
+import junit.framework.Assert;
 
-  public void testCreateDocument() {
+public class ZooKeeperConnectionTest extends Assert {
+
+  public static LocalZooKeeperServer zookeeperServer;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    zookeeperServer = new LocalZooKeeperServer();
+    zookeeperServer.start();
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+    zookeeperServer.close();
+  }
+
+  @Before
+  public void before() throws Exception {
+  }
+
+  @After
+  public void after() throws Exception {
+  }
+
+  @Test
+  public void test1() {
     assertEquals("aaa", "aaa");
+  }
+
+  @Test
+  public void test2() {
+    assertEquals("bbb", "bbb");
   }
 
 }

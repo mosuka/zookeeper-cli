@@ -94,13 +94,13 @@
 
   <target name="jar" description="Create JAR files.">
     <mkdir dir="${dist.dir}" />
-    <copy todir="${dist.dir}/${project}-${version}/lib">
+    <copy todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}" />
     </copy>
     <pathconvert property="manifest.classpath" refid="run.classpath" targetos="unix" pathsep=" ">
         <map from="${basedir}/${lib.dir}" to="./lib" />
     </pathconvert>
-    <jar destfile="${dist.dir}/${project}-${version}/${project}-${version}.jar" basedir="${build.dir}">
+    <jar destfile="${dist.dir}/${project}-${version}.jar" basedir="${build.dir}">
       <manifest>
         <attribute name="Main-Class" value="com.github.mosuka.zookeeper.cli.ZooKeeperNonInteractiveCLI"/>
         <attribute name="Class-Path"  value="${manifest.classpath}"/>
@@ -110,23 +110,21 @@
 
   <target name="package" description="Create package.">
     <mkdir dir="${package.dir}" />
-  	<copy file="README.md" todir="${dist.dir}/${project}-${version}"/>
-  	<copy file="LICENSE" todir="${dist.dir}/${project}-${version}"/>
-    <copy todir="${dist.dir}/${project}-${version}/bin">
+  	<copy file="README.md" todir="${package.dir}/${project}-${version}"/>
+  	<copy file="LICENSE" todir="${package.dir}/${project}-${version}"/>
+    <copy todir="${package.dir}/${project}-${version}/bin">
       <fileset dir="${bin.dir}" />
     </copy>
-    <copy todir="${dist.dir}/${project}-${version}/conf">
+  	<copy file="${dist.dir}/${project}-${version}.jar" todir="${package.dir}/${project}-${version}"/>
+    <copy todir="${package.dir}/${project}-${version}/lib">
+      <fileset dir="${dist.dir}/lib" />
+    </copy>
+    <copy todir="${package.dir}/${project}-${version}/conf">
       <fileset dir="${conf.dir}" />
     </copy>
-  	<chmod file="${dist.dir}/${project}-${version}/bin/*.sh" perm="755"/>
+  	<chmod file="${package.dir}/${project}-${version}/bin/*.sh" perm="755"/>
     <tar destfile="${package.dir}/${project}-${version}.tgz" compression="gzip" longfile="gnu">
-      <tarfileset dir="${dist.dir}" includes="**" />
+      <tarfileset dir="${package.dir}" includes="**" />
     </tar>
-  </target>
-
-  <target name="run" description="Run application.">
-    <java jar="${dist.dir}/${project}-${version}/${project}-${version}.jar" fork="true">
-      <arg value="-h" />
-    </java>
   </target>
 </project>

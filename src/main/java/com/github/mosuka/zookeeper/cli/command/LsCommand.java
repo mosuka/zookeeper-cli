@@ -61,10 +61,10 @@ public class LsCommand extends Command {
         addResponse("stat", statMap);
       }
 
-      setExitCode(0);
-      setMessage("OK");
+      setExitCode(Command.SUCCESS_EXIT_CODE);
+      setMessage(Command.SUCCESS_MESSAGE);
     } catch (KeeperException | InterruptedException e) {
-      setExitCode(1);
+      setExitCode(Command.ERROR_EXIT_CODE);
       setMessage(e.getMessage());
     }
   }

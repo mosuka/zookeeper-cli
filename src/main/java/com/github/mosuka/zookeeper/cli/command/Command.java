@@ -29,9 +29,13 @@ import com.github.mosuka.zookeeper.cli.util.ZooKeeperConnection;
 
 public class Command implements CommandImpl {
 
+  public static final String SUCCESS_MESSAGE = "Success";
+  public static final int SUCCESS_EXIT_CODE = 0;
+  public static final int ERROR_EXIT_CODE = 1;
+
   private String name;
-  private int exitCode;
-  private String message;
+  private int exitCode = SUCCESS_EXIT_CODE;
+  private String message = SUCCESS_MESSAGE;
 
   final CountDownLatch connSignal = new CountDownLatch(1);
   private ZooKeeperConnection zookeeperConnection = null;
@@ -81,13 +85,12 @@ public class Command implements CommandImpl {
 
   public void connect(String zookeeperServer, int sessionTimeout)
       throws IOException, InterruptedException {
-    zookeeperConnection =
-        new ZooKeeperConnection(zookeeperServer, sessionTimeout);
+    zookeeperConnection = new ZooKeeperConnection(zookeeperServer, sessionTimeout);
   }
 
   public void run(Map<String, Object> parameters) {
-    setExitCode(0);
-    setMessage("OK");
+    setExitCode(SUCCESS_EXIT_CODE);
+    setMessage(SUCCESS_MESSAGE);
   }
 
   public void output(Map<String, Object> parameters)
@@ -125,7 +128,7 @@ public class Command implements CommandImpl {
       run(parameters);
       close();
     } catch (IOException | InterruptedException e) {
-      setExitCode(1);
+      setExitCode(ERROR_EXIT_CODE);
       setMessage(e.getMessage());
     } finally {
       output(parameters);
