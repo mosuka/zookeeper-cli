@@ -51,14 +51,14 @@ public class LsCommand extends Command {
                 : DEFAULT_WITH_STAT;
 
         try {
-            ZooKeeper zookeeper = getZookeeperConnection().getZooKeeper();
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
             if (withStat) {
                 Stat stat = new Stat();
-                children = zookeeper.getChildren(path, watch, stat);
+                children = zk.getChildren(path, watch, stat);
                 statMap = StatUtil.stat2Map(stat);
             } else {
-                children = zookeeper.getChildren(path, watch);
+                children = zk.getChildren(path, watch);
             }
 
             addResponse("children", children);

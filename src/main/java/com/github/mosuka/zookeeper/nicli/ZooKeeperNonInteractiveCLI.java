@@ -22,7 +22,9 @@ import java.util.Map;
 
 import com.github.mosuka.zookeeper.nicli.command.Command;
 import com.github.mosuka.zookeeper.nicli.command.CommandImpl;
+import com.github.mosuka.zookeeper.nicli.command.CreateCommand;
 import com.github.mosuka.zookeeper.nicli.command.LsCommand;
+import com.github.mosuka.zookeeper.nicli.command.StatCommand;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -45,15 +47,46 @@ public class ZooKeeperNonInteractiveCLI {
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 
         /*
+         * create command
+         */
+        Subparser createCommandSubparser = subpersers.addParser("create").help("create the znode.")
+                .setDefault("command", new CreateCommand());
+        createCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
+                .setDefault(CreateCommand.DEFAULT_PATH).help("specify ZooKeeper znode path.");
+        createCommandSubparser.addArgument("data").metavar("DATA").type(String.class)
+                .setDefault(CreateCommand.DEFAULT_DATA).nargs("?")
+                .help("specify the data to be registered in the znode.");
+        createCommandSubparser.addArgument("acl").metavar("ACL").type(String.class)
+                .setDefault(CreateCommand.DEFAULT_ACL).nargs("?")
+                .help("specify the access control list to be registered in the znode.");
+        createCommandSubparser.addArgument("-e", "--ephemeral").type(Boolean.class)
+                .setDefault(CreateCommand.DEFAULT_EPHEMERAL).action(storeTrue()).help("set create mode to ephemeral.");
+        createCommandSubparser.addArgument("-s", "--sequential").type(Boolean.class)
+                .setDefault(CreateCommand.DEFAULT_SEQUENTIAL).action(storeTrue())
+                .help("set create mode to sequential.");
+        createCommandSubparser.addArgument("-c", "--container").type(Boolean.class)
+                .setDefault(CreateCommand.DEFAULT_CONTAINER).action(storeTrue()).help("set create mode to container.");
+
+        /*
          * ls command
          */
-        Subparser lsCommandSubparser = subpersers.addParser("ls").help("List the znodes.").setDefault("command",
+        Subparser lsCommandSubparser = subpersers.addParser("ls").help("list the znodes.").setDefault("command",
                 new LsCommand());
         lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(LsCommand.DEFAULT_PATH)
                 .help("specify ZooKeeper znode path.");
         lsCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(LsCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("enable watcher.");
         lsCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(LsCommand.DEFAULT_WITH_STAT)
+                .action(storeTrue()).help("gets the stat along with the data.");
+
+        /*
+         * stat command
+         */
+        Subparser statCommandSubparser = subpersers.addParser("stat").help("show stats of the znode.")
+                .setDefault("command", new StatCommand());
+        statCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(StatCommand.DEFAULT_PATH)
+                .help("specify ZooKeeper znode path.");
+        statCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(StatCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("gets the stat along with the data.");
 
         /*

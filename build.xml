@@ -70,12 +70,12 @@
     <delete dir="${package.dir}" />
   </target>
 
-  <target name="resolve" description="Resolve dependencies.">
+  <target name="resolve" description="Resolve dependencies." depends="clean">
     <ivy:retrieve conf="compile" pattern="${lib.dir}/[artifact]-[revision].[ext]"/>
     <ivy:retrieve conf="test" pattern="${test.lib.dir}/[artifact]-[revision].[ext]"/>
   </target>
 
-  <target name="compile" description="Compile project.">
+  <target name="compile" description="Compile project." depends="resolve">
     <mkdir dir="${build.dir}" />
     <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" classpathref="compile.classpath" />
   </target>
@@ -93,7 +93,7 @@
     </junit>
   </target>
 
-  <target name="jar" description="Create JAR files.">
+  <target name="jar" description="Create JAR files." depends="compile">
     <mkdir dir="${dist.dir}" />
     <copy todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}" />
@@ -109,7 +109,7 @@
     </jar>
   </target>
 
-  <target name="package" description="Create package.">
+  <target name="package" description="Create package." depends="jar">
     <mkdir dir="${package.dir}" />
   	<copy file="README.md" todir="${package.dir}/${project}-${version}"/>
   	<copy file="LICENSE" todir="${package.dir}/${project}-${version}"/>

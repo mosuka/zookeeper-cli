@@ -16,12 +16,49 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
+
+import com.github.mosuka.zookeeper.nicli.util.StatUtil;
+
 public class StatCommand extends Command {
+    public static final String DEFAULT_PATH = "/";
+    public static final boolean DEFAULT_WATCH = false;
+
     public StatCommand() {
         this("stat");
     }
 
     public StatCommand(String name) {
         super(name);
+    }
+
+    @Override
+    public void run(Map<String, Object> parameters) {
+        Map<String, Object> statMap = new LinkedHashMap<String, Object>();
+
+        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
+        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
+
+        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
+        try {
+            Stat stat = zk.exists(path, watch);
+            statMap = StatUtil.stat2Map(stat);
+
+            if (!statMap.isEmpty()) {
+                addResponse("stat", statMap);
+            }
+
+            setStatus(Command.STATUS_SUCCESS);
+            setMessage(Command.SUCCESS_MESSAGE);
+        } catch (KeeperException | InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        }
     }
 }
