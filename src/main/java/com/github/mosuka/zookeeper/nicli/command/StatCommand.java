@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mosuka.zookeeper.cli.command;
+package com.github.mosuka.zookeeper.nicli.command;
 
 public class StatCommand extends Command {
+    public StatCommand() {
+        this("stat");
+    }
 
-  public StatCommand() {
-    this("stat");
-  }
-
-  public StatCommand(String name) {
-    super(name);
-  }
-
+    public StatCommand(String name) {
+        super(name);
+    }
 }

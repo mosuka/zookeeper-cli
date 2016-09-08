@@ -103,7 +103,7 @@
     </pathconvert>
     <jar destfile="${dist.dir}/${project}-${version}.jar" basedir="${build.dir}">
       <manifest>
-        <attribute name="Main-Class" value="com.github.mosuka.zookeeper.cli.ZooKeeperNonInteractiveCLI"/>
+        <attribute name="Main-Class" value="com.github.mosuka.zookeeper.nicli.ZooKeeperNonInteractiveCLI"/>
         <attribute name="Class-Path"  value="${manifest.classpath}"/>
       </manifest>
     </jar>

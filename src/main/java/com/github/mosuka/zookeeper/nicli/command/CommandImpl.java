@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mosuka.zookeeper.cli.command;
+package com.github.mosuka.zookeeper.nicli.command;
 
 import java.util.Map;
 
@@ -45,5 +45,5 @@ ZooKeeper -server host:port cmd args
  */
 
 public interface CommandImpl {
-  int execute(Map<String, Object> parameters) throws Exception;
+    int execute(Map<String, Object> parameters) throws Exception;
 }
