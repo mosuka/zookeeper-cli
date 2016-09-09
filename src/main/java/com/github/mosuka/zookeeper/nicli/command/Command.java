@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperConnection;
 
 public class Command implements CommandImpl {
-    public static final String DEFAULT_ZOOKEEPER_SERVER = "localhost:2181";
+    public static final String DEFAULT_SERVER = "localhost:2181";
     public static final int DEFAULT_SESSION_TIMEOUT = 3000;
     public static final boolean DEFAULT_PRETTY_PRINT = false;
 
@@ -128,15 +128,14 @@ public class Command implements CommandImpl {
 
     @Override
     public int execute(Map<String, Object> parameters) throws Exception {
-        String zkServer = parameters.containsKey("zookeeper_server") ? (String) parameters.get("zookeeper_server")
-                : DEFAULT_ZOOKEEPER_SERVER;
+        String server = parameters.containsKey("server") ? (String) parameters.get("server") : DEFAULT_SERVER;
         int sesstionTimeout = parameters.containsKey("session_timeout") ? (Integer) parameters.get("session_timeout")
                 : DEFAULT_SESSION_TIMEOUT;
         boolean prettyPrint = parameters.containsKey("pretty_print") ? (Boolean) parameters.get("pretty_print")
                 : DEFAULT_PRETTY_PRINT;
 
         try {
-            connect(zkServer, sesstionTimeout);
+            connect(server, sesstionTimeout);
             run(parameters);
             close();
         } catch (IOException | InterruptedException e) {

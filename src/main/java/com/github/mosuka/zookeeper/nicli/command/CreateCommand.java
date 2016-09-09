@@ -16,6 +16,8 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
+import org.apache.zookeeper.data.Stat;
 
 import com.github.mosuka.zookeeper.nicli.util.ACLUtil;
 
@@ -33,7 +36,7 @@ public class CreateCommand extends Command {
     public static final String DEFAULT_ACL = "";
     public static final boolean DEFAULT_EPHEMERAL = false;
     public static final boolean DEFAULT_SEQUENTIAL = false;
-    public static final boolean DEFAULT_CONTAINER = false;
+    public static final boolean DEFAULT_WATCH = false;
 
     public CreateCommand() {
         this("create");
@@ -52,27 +55,51 @@ public class CreateCommand extends Command {
                 : DEFAULT_EPHEMERAL;
         boolean sequential = parameters.containsKey("sequential") ? (Boolean) parameters.get("sequential")
                 : DEFAULT_SEQUENTIAL;
+        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
 
         ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
         try {
-            CreateMode flags = CreateMode.PERSISTENT;
-            if (ephemeral && sequential) {
-                flags = CreateMode.EPHEMERAL_SEQUENTIAL;
-            } else if (ephemeral) {
-                flags = CreateMode.EPHEMERAL;
-            } else if (sequential) {
-                flags = CreateMode.PERSISTENT_SEQUENTIAL;
-            }
-
             byte[] byteData = data.getBytes();
 
-            List<ACL> aclList = Ids.OPEN_ACL_UNSAFE;
+            List<ACL> aclObj = Ids.OPEN_ACL_UNSAFE;
             if (acl.length() > 0) {
-                aclList = ACLUtil.parseACLs(acl);
+                aclObj = ACLUtil.parseACLs(acl);
             }
 
-            String newPath = zk.create(path, byteData, aclList, flags);
+            CreateMode createMode = CreateMode.PERSISTENT;
+            if (ephemeral && sequential) {
+                createMode = CreateMode.EPHEMERAL_SEQUENTIAL;
+            } else if (ephemeral) {
+                createMode = CreateMode.EPHEMERAL;
+            } else if (sequential) {
+                createMode = CreateMode.PERSISTENT_SEQUENTIAL;
+            }
+
+            String newPath = null;
+            List<String> paths = Arrays.asList(path.split("/"));
+            StringBuilder sbPath = new StringBuilder();
+            for (Iterator<String> i = paths.iterator(); i.hasNext();) {
+                String p = i.next();
+                if (p.length() == 0) {
+                    continue;
+                }
+                sbPath.append("/" + p);
+
+                Stat stat = zk.exists(sbPath.toString(), watch);
+                if (stat != null) {
+                    // exist
+                    continue;
+                } else {
+                    if (i.hasNext()) {
+                        // sub node created by empty data
+                        newPath = zk.create(sbPath.toString(), DEFAULT_DATA.getBytes(), aclObj, createMode);
+                    } else {
+                        newPath = zk.create(sbPath.toString(), byteData, aclObj, createMode);
+                    }
+                }
+            }
+
             addResponse("new_path", newPath);
 
             setStatus(Command.STATUS_SUCCESS);
