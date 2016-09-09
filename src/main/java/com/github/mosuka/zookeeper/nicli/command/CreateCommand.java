@@ -88,13 +88,20 @@ public class CreateCommand extends Command {
 
                 Stat stat = zk.exists(sbPath.toString(), watch);
                 if (stat != null) {
-                    // exist
-                    continue;
+                    // already exist
+                    if (i.hasNext()) {
+                        // skip this node
+                        continue;
+                    } else {
+                        // throw exception
+                    }
                 } else {
+                    // znode does not exist
                     if (i.hasNext()) {
                         // sub node created by empty data
-                        newPath = zk.create(sbPath.toString(), DEFAULT_DATA.getBytes(), aclObj, createMode);
+                        newPath = zk.create(sbPath.toString(), "".getBytes(), aclObj, createMode);
                     } else {
+                        // create new node by data
                         newPath = zk.create(sbPath.toString(), byteData, aclObj, createMode);
                     }
                 }

@@ -49,6 +49,28 @@ public class ZooKeeperNonInteractiveCLI {
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 
         /*
+         * ls command
+         */
+        Subparser lsCommandSubparser = subpersers.addParser("ls").help("list the znodes.").setDefault("command",
+                new LsCommand("ls"));
+        lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(LsCommand.DEFAULT_PATH)
+                .nargs("?").help("specify ZooKeeper znode path.");
+        lsCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(LsCommand.DEFAULT_WATCH)
+                .action(storeTrue()).help("enable watcher.");
+        lsCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(LsCommand.DEFAULT_WITH_STAT)
+                .action(storeTrue()).help("gets the stat along with the data.");
+
+        /*
+         * stat command
+         */
+        Subparser statCommandSubparser = subpersers.addParser("stat").help("show stats of the znode.")
+                .setDefault("command", new StatCommand("stat"));
+        statCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(StatCommand.DEFAULT_PATH)
+                .help("specify ZooKeeper znode path.");
+        statCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(StatCommand.DEFAULT_WATCH)
+                .action(storeTrue()).help("gets the stat along with the data.");
+
+        /*
          * create command
          */
         Subparser createCommandSubparser = subpersers.addParser("create").help("create the znode.")
@@ -95,18 +117,6 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("gets the stat along with the data.");
 
         /*
-         * ls command
-         */
-        Subparser lsCommandSubparser = subpersers.addParser("ls").help("list the znodes.").setDefault("command",
-                new LsCommand("ls"));
-        lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(LsCommand.DEFAULT_PATH)
-                .help("specify ZooKeeper znode path.");
-        lsCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(LsCommand.DEFAULT_WATCH)
-                .action(storeTrue()).help("enable watcher.");
-        lsCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(LsCommand.DEFAULT_WITH_STAT)
-                .action(storeTrue()).help("gets the stat along with the data.");
-
-        /*
          * set command
          */
         Subparser setCommandSubparser = subpersers.addParser("set").help("set the znodes.").setDefault("command",
@@ -122,14 +132,39 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("gets the stat along with the data.");
 
         /*
-         * stat command
+         * sunc
          */
-        Subparser statCommandSubparser = subpersers.addParser("stat").help("show stats of the znode.")
-                .setDefault("command", new StatCommand("stat"));
-        statCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(StatCommand.DEFAULT_PATH)
-                .help("specify ZooKeeper znode path.");
-        statCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(StatCommand.DEFAULT_WATCH)
-                .action(storeTrue()).help("gets the stat along with the data.");
+        // TODO
+
+        /*
+         * addAuth
+         */
+        // TODO
+
+        /*
+         * listQuota
+         */
+        // TODO
+
+        /*
+         * setQuota
+         */
+        // TODO
+
+        /*
+         * deleteQuota
+         */
+        // TODO
+
+        /*
+         * getAcl
+         */
+        // TODO
+
+        /*
+         * setAcl
+         */
+        // TODO
 
         /*
          * execute command
