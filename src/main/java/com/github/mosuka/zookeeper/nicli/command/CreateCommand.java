@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
@@ -88,20 +89,21 @@ public class CreateCommand extends Command {
 
                 Stat stat = zk.exists(sbPath.toString(), watch);
                 if (stat != null) {
-                    // already exist
+                    // znode already exist
                     if (i.hasNext()) {
-                        // skip this node
+                        // skip this znode
                         continue;
                     } else {
                         // throw exception
+                        throw KeeperException.NodeExistsException.create(Code.NODEEXISTS);
                     }
                 } else {
                     // znode does not exist
                     if (i.hasNext()) {
-                        // sub node created by empty data
+                        // sub znode created by empty data
                         newPath = zk.create(sbPath.toString(), "".getBytes(), aclObj, createMode);
                     } else {
-                        // create new node by data
+                        // create new znode by data
                         newPath = zk.create(sbPath.toString(), byteData, aclObj, createMode);
                     }
                 }
