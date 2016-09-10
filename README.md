@@ -26,11 +26,6 @@ Default target: compile
 ### Create package
 
 ```
-$ ant clean
-$ ant resolve
-$ ant compile
-$ ant test
-$ ant jar
 $ ant package
 ```
 
