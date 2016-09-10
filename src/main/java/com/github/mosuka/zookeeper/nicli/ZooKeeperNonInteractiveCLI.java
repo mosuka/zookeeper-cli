@@ -31,12 +31,14 @@ import com.github.mosuka.zookeeper.nicli.command.ListQuotaCommand;
 import com.github.mosuka.zookeeper.nicli.command.LsCommand;
 import com.github.mosuka.zookeeper.nicli.command.SetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.SetCommand;
+import com.github.mosuka.zookeeper.nicli.command.SetQuotaCommand;
 import com.github.mosuka.zookeeper.nicli.command.StatCommand;
 import com.github.mosuka.zookeeper.nicli.command.SyncCommand;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
@@ -185,7 +187,7 @@ public class ZooKeeperNonInteractiveCLI {
                 .setDefault(AddAuthCommand.DEFAULT_AUTH).help("specify auth.");
 
         /*
-         * listQuota
+         * listquota command
          */
         Subparser listQuotaCommandSubparser = subpersers.addParser("listquota").help("list quota.")
                 .setDefault("command", new ListQuotaCommand("listquota"));
@@ -193,12 +195,20 @@ public class ZooKeeperNonInteractiveCLI {
                 .setDefault(ListQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
 
         /*
-         * setQuota
+         * setquota command
          */
-        // TODO
+        Subparser setQuotaCommandSubparser = subpersers.addParser("setquota").help("set quota.").setDefault("command",
+                new ListQuotaCommand("setquota"));
+        setQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
+                .setDefault(SetQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
+        MutuallyExclusiveGroup group = setQuotaCommandSubparser.addMutuallyExclusiveGroup().required(true);
+        group.addArgument("-b", "--bytes").type(Long.class).setDefault(SetQuotaCommand.DEFAULT_BYTES)
+                .help("specify the bytes quota.");
+        group.addArgument("-n", "--num-nodes").type(Integer.class).setDefault(SetQuotaCommand.DEFAULT_NUM_NODES)
+                .help("specify the num quota.");
 
         /*
-         * deleteQuota
+         * deluota command
          */
         // TODO
 
