@@ -28,6 +28,7 @@ import com.github.mosuka.zookeeper.nicli.command.DeleteCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetCommand;
 import com.github.mosuka.zookeeper.nicli.command.LsCommand;
+import com.github.mosuka.zookeeper.nicli.command.SetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.SetCommand;
 import com.github.mosuka.zookeeper.nicli.command.StatCommand;
 import com.github.mosuka.zookeeper.nicli.command.SyncCommand;
@@ -146,7 +147,7 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("specify the znode path.");
 
         /*
-         * getAcl
+         * getacl command
          */
         Subparser getAclCommandSubparser = subpersers.addParser("getacl").help("get ACL of the znode.")
                 .setDefault("command", new GetAclCommand("getacl"));
@@ -157,9 +158,20 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("gets the stat along with the data.");
 
         /*
-         * setAcl
+         * setacl command
          */
-        // TODO
+        Subparser setAclCommandSubparser = subpersers.addParser("setacl").help("set ACL of the znode.")
+                .setDefault("command", new GetAclCommand("setacl"));
+        setAclCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
+                .setDefault(SetAclCommand.DEFAULT_PATH).help("specify the znode path.");
+        setAclCommandSubparser.addArgument("acl").metavar("ACL").type(String.class)
+                .setDefault(SetAclCommand.DEFAULT_ACL)
+                .help("specify the access control list to be registered in the znode.");
+        setAclCommandSubparser.addArgument("-v", "--version").type(Integer.class)
+                .setDefault(SetAclCommand.DEFAULT_VERSION).help("specify the znode version.");
+        setAclCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class)
+                .setDefault(SetAclCommand.DEFAULT_WITH_STAT).action(storeTrue())
+                .help("gets the stat along with the data.");
 
         /*
          * addauth command
