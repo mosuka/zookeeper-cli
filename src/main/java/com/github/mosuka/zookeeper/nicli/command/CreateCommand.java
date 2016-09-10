@@ -16,6 +16,7 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ public class CreateCommand extends Command {
     public static final String DEFAULT_ACL = "";
     public static final boolean DEFAULT_EPHEMERAL = false;
     public static final boolean DEFAULT_SEQUENTIAL = false;
+    public static final boolean DEFAULT_PARENTS = false;
     public static final boolean DEFAULT_WATCH = false;
 
     public CreateCommand() {
@@ -56,6 +58,7 @@ public class CreateCommand extends Command {
                 : DEFAULT_EPHEMERAL;
         boolean sequential = parameters.containsKey("sequential") ? (Boolean) parameters.get("sequential")
                 : DEFAULT_SEQUENTIAL;
+        boolean parents = parameters.containsKey("parents") ? (Boolean) parameters.get("parents") : DEFAULT_PARENTS;
         boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
 
         ZooKeeper zk = getZookeeperConnection().getZooKeeper();
@@ -78,35 +81,42 @@ public class CreateCommand extends Command {
             }
 
             String newPath = null;
-            List<String> paths = Arrays.asList(path.split("/"));
-            StringBuilder sbPath = new StringBuilder();
-            for (Iterator<String> i = paths.iterator(); i.hasNext();) {
-                String p = i.next();
-                if (p.length() == 0) {
-                    continue;
-                }
-                sbPath.append("/" + p);
-
-                Stat stat = zk.exists(sbPath.toString(), watch);
-                if (stat != null) {
-                    // znode already exist
-                    if (i.hasNext()) {
-                        // skip this znode
-                        continue;
-                    } else {
-                        // throw exception
-                        throw KeeperException.NodeExistsException.create(Code.NODEEXISTS);
-                    }
+            if (parents) {
+                StringBuilder sbPath = new StringBuilder("/");
+                List<String> paths = new ArrayList<String>();
+                if (path.equals("/")) {
+                    paths.add("");
                 } else {
-                    // znode does not exist
-                    if (i.hasNext()) {
-                        // sub znode created by empty data
-                        newPath = zk.create(sbPath.toString(), "".getBytes(), aclObj, createMode);
+                    paths = Arrays.asList(path.split("/"));
+                }
+                for (Iterator<String> i = paths.iterator(); i.hasNext();) {
+                    String p = i.next();
+                    sbPath.append(p);
+
+                    Stat stat = zk.exists(sbPath.toString(), watch);
+                    if (stat != null) {
+                        // znode already exist
+                        if (!i.hasNext()) {
+                            // throw exception
+                            throw KeeperException.NodeExistsException.create(Code.NODEEXISTS, sbPath.toString());
+                        }
                     } else {
-                        // create new znode by data
-                        newPath = zk.create(sbPath.toString(), byteData, aclObj, createMode);
+                        // znode does not exist
+                        if (i.hasNext()) {
+                            // sub znode created by empty data
+                            newPath = zk.create(sbPath.toString(), "".getBytes(), aclObj, createMode);
+                        } else {
+                            // create new znode by data
+                            newPath = zk.create(sbPath.toString(), byteData, aclObj, createMode);
+                        }
+                    }
+
+                    if (i.hasNext() && !sbPath.toString().endsWith("/")) {
+                        sbPath.append("/");
                     }
                 }
+            } else {
+                newPath = zk.create(path, byteData, aclObj, createMode);
             }
 
             addResponse("new_path", newPath);

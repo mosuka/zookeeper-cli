@@ -88,6 +88,9 @@ public class ZooKeeperNonInteractiveCLI {
         createCommandSubparser.addArgument("-s", "--sequential").type(Boolean.class)
                 .setDefault(CreateCommand.DEFAULT_SEQUENTIAL).action(storeTrue())
                 .help("set create mode to sequential.");
+        createCommandSubparser.addArgument("-p", "--parents").type(Boolean.class)
+                .setDefault(CreateCommand.DEFAULT_PARENTS).action(storeTrue())
+                .help("Create intermediate znode as required.");
         createCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(CreateCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("enable watcher.");
 
