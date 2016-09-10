@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.zookeeper.ZooKeeper;
 
 public class AddAuthCommand extends Command {
-    public static final String DEFAULT_SCHEME = "/";
+    public static final String DEFAULT_SCHEME = "";
     public static final String DEFAULT_AUTH = "";
 
     public AddAuthCommand() {

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.mosuka.zookeeper.nicli.command.Command;
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperTestBase;
 
 public class CommandTest extends ZooKeeperTestBase {
@@ -16,7 +15,7 @@ public class CommandTest extends ZooKeeperTestBase {
         parameters.put("session_timeout", sessionTimeout);
         parameters.put("pretty_print", false);
 
-        int statusCode = 0;
+        int statusCode = Command.STATUS_SUCCESS;
 
         Command command = new Command("test");
         try {
@@ -25,6 +24,6 @@ public class CommandTest extends ZooKeeperTestBase {
             fail(e.getMessage());
         }
 
-        assertEquals(0, statusCode);
+        assertEquals(Command.STATUS_SUCCESS, statusCode);
     }
 }

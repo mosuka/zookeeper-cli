@@ -7,19 +7,19 @@ import org.junit.Test;
 
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperTestBase;
 
-public class StatCommandTest extends ZooKeeperTestBase {
+public class AddAuthCommandTest extends ZooKeeperTestBase {
     @Test
     public void testExecute() {
         Map<String, Object> parameters = new LinkedHashMap<String, Object>();
         parameters.put("zookeeper_server", zkServerStr);
         parameters.put("session_timeout", sessionTimeout);
         parameters.put("pretty_print", false);
-        parameters.put("path", "/");
-        parameters.put("with_stat", false);
+        parameters.put("scheme", "digest");
+        parameters.put("auth", "test:test");
 
         int statusCode = Command.STATUS_SUCCESS;
 
-        StatCommand command = new StatCommand();
+        AddAuthCommand command = new AddAuthCommand();
         try {
             statusCode = command.execute(parameters);
         } catch (Exception e) {

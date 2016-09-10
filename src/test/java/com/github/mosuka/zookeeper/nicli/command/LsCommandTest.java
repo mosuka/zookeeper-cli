@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.mosuka.zookeeper.nicli.command.LsCommand;
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperTestBase;
 
 public class LsCommandTest extends ZooKeeperTestBase {
@@ -19,7 +18,7 @@ public class LsCommandTest extends ZooKeeperTestBase {
         parameters.put("watch", false);
         parameters.put("with_stat", false);
 
-        int statusCode = 0;
+        int statusCode = Command.STATUS_SUCCESS;
 
         LsCommand command = new LsCommand();
         try {
@@ -28,6 +27,6 @@ public class LsCommandTest extends ZooKeeperTestBase {
             fail(e.getMessage());
         }
 
-        assertEquals(0, statusCode);
+        assertEquals(Command.STATUS_SUCCESS, statusCode);
     }
 }
