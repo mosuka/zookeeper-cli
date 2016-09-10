@@ -35,12 +35,12 @@ public class ZooKeeperConnection {
         this(DEFAULT_SERVER, DEFAULT_SESSION_TIMEOUT);
     }
 
-    public ZooKeeperConnection(String zookeeperServer, int sessionTimeout) throws IOException, InterruptedException {
-        connect(zookeeperServer, sessionTimeout);
+    public ZooKeeperConnection(String server, int sessionTimeout) throws IOException, InterruptedException {
+        connect(server, sessionTimeout);
     }
 
-    public void connect(String zookeeperServer, int sessionTimeout) throws IOException, InterruptedException {
-        zookeeper = new ZooKeeper(zookeeperServer, sessionTimeout, new Watcher() {
+    public void connect(String server, int sessionTimeout) throws IOException, InterruptedException {
+        zookeeper = new ZooKeeper(server, sessionTimeout, new Watcher() {
             public void process(WatchedEvent event) {
                 if (event.getState() == KeeperState.SyncConnected) {
                     connSignal.countDown();

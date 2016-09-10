@@ -10,7 +10,7 @@ import junit.framework.Assert;
 public class ZooKeeperTestBase extends Assert {
     public static LocalZooKeeperServer localZkServer;
 
-    public String zkServerStr = null;
+    public String server = null;
     public int sessionTimeout = 1000;
 
     @BeforeClass
@@ -26,7 +26,7 @@ public class ZooKeeperTestBase extends Assert {
 
     @Before
     public void before() throws Exception {
-        zkServerStr = "localhost:" + Integer.toString(localZkServer.getPort());
+        server = "localhost:" + Integer.toString(localZkServer.getPort());
     }
 
     @After

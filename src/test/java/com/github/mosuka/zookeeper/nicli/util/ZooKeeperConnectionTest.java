@@ -27,7 +27,7 @@ public class ZooKeeperConnectionTest extends ZooKeeperTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-        zkConnection = new ZooKeeperConnection(zkServerStr, sessionTimeout);
+        zkConnection = new ZooKeeperConnection(server, sessionTimeout);
     }
 
     @After
