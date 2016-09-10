@@ -1,7 +1,7 @@
 # zookeeper-cli
 
 zookeeper-cli is a non-interactive command line client for [ZooKeeper](http://zookeeper.apache.org/).
-
+This CLI outputs JSON format, so it is easy to re-use the data.
 
 ## How to build this project
 
