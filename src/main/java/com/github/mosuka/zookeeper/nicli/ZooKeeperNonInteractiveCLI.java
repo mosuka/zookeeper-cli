@@ -27,6 +27,7 @@ import com.github.mosuka.zookeeper.nicli.command.CreateCommand;
 import com.github.mosuka.zookeeper.nicli.command.DeleteCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetCommand;
+import com.github.mosuka.zookeeper.nicli.command.ListQuotaCommand;
 import com.github.mosuka.zookeeper.nicli.command.LsCommand;
 import com.github.mosuka.zookeeper.nicli.command.SetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.SetCommand;
@@ -186,7 +187,10 @@ public class ZooKeeperNonInteractiveCLI {
         /*
          * listQuota
          */
-        // TODO
+        Subparser listQuotaCommandSubparser = subpersers.addParser("listquota").help("list quota.")
+                .setDefault("command", new ListQuotaCommand("listquota"));
+        listQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
+                .setDefault(ListQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
 
         /*
          * setQuota
