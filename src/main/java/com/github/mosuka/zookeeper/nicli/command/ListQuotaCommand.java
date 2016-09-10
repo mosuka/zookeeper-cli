@@ -49,23 +49,20 @@ public class ListQuotaCommand extends Command {
             Stat quotaStat = new Stat();
             byte[] quotaData = zk.getData(quotaPath, false, quotaStat);
             StatsTrack quotaStatsTrack = new StatsTrack(new String(quotaData));
-
             Map<String, Object> quotaMap = new LinkedHashMap<String, Object>();
-            quotaMap.put("path", quotaStatsTrack);
+            quotaMap.put("path", quotaPath);
             quotaMap.put("count", quotaStatsTrack.getCount());
             quotaMap.put("bytes", quotaStatsTrack.getBytes());
-
             addResponse("quota", quotaMap);
 
             Stat statStat = new Stat();
             byte[] statData = zk.getData(statPath, false, statStat);
             StatsTrack statStatsTrack = new StatsTrack(new String(statData));
-            System.out.println("Output stat for " + path + " " + statStatsTrack.toString());
-
             Map<String, Object> statMap = new LinkedHashMap<String, Object>();
             statMap.put("path", statPath);
             statMap.put("count", statStatsTrack.getCount());
             statMap.put("bytes", statStatsTrack.getBytes());
+            addResponse("stat", statMap);
 
             setStatus(Command.STATUS_SUCCESS);
             setMessage(Command.SUCCESS_MESSAGE);

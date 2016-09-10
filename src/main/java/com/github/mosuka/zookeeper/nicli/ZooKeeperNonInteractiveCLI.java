@@ -24,6 +24,7 @@ import com.github.mosuka.zookeeper.nicli.command.AddAuthCommand;
 import com.github.mosuka.zookeeper.nicli.command.Command;
 import com.github.mosuka.zookeeper.nicli.command.CommandImpl;
 import com.github.mosuka.zookeeper.nicli.command.CreateCommand;
+import com.github.mosuka.zookeeper.nicli.command.DelQuotaCommand;
 import com.github.mosuka.zookeeper.nicli.command.DeleteCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetAclCommand;
 import com.github.mosuka.zookeeper.nicli.command.GetCommand;
@@ -198,19 +199,26 @@ public class ZooKeeperNonInteractiveCLI {
          * setquota command
          */
         Subparser setQuotaCommandSubparser = subpersers.addParser("setquota").help("set quota.").setDefault("command",
-                new ListQuotaCommand("setquota"));
+                new SetQuotaCommand("setquota"));
         setQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
                 .setDefault(SetQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
-        MutuallyExclusiveGroup group = setQuotaCommandSubparser.addMutuallyExclusiveGroup().required(true);
-        group.addArgument("-b", "--bytes").type(Long.class).setDefault(SetQuotaCommand.DEFAULT_BYTES)
+        MutuallyExclusiveGroup groupSetQuota = setQuotaCommandSubparser.addMutuallyExclusiveGroup().required(true);
+        groupSetQuota.addArgument("-b", "--bytes").type(Long.class).setDefault(SetQuotaCommand.DEFAULT_BYTES)
                 .help("specify the bytes quota.");
-        group.addArgument("-n", "--num-nodes").type(Integer.class).setDefault(SetQuotaCommand.DEFAULT_NUM_NODES)
+        groupSetQuota.addArgument("-n", "--num-nodes").type(Integer.class).setDefault(SetQuotaCommand.DEFAULT_NUM_NODES)
                 .help("specify the num quota.");
 
         /*
-         * deluota command
+         * delquota command
          */
-        // TODO
+        Subparser delQuotaCommandSubparser = subpersers.addParser("delquota").help("delete quota.")
+                .setDefault("command", new DelQuotaCommand("delquota"));
+        delQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
+                .setDefault(DelQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
+        delQuotaCommandSubparser.addArgument("-b", "--bytes").type(Boolean.class)
+                .setDefault(DelQuotaCommand.DEFAULT_BYTES).action(storeTrue()).help("delete quota by bytes.");
+        delQuotaCommandSubparser.addArgument("-n", "--num-nodes").type(Boolean.class)
+                .setDefault(DelQuotaCommand.DEFAULT_NUM_NODES).action(storeTrue()).help("delete quota by num nodes.");
 
         /*
          * execute command

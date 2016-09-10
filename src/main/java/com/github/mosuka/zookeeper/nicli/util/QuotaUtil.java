@@ -122,4 +122,32 @@ public class QuotaUtil {
             }
         }
     }
+
+    /**
+     * trim the quota tree to recover unwanted tree elements in the quota's tree
+     *
+     * @param zk
+     *            the zookeeper client
+     * @param path
+     *            the path to start from and go up and see if their is any
+     *            unwanted parent in the path.
+     * @return true if sucessful
+     * @throws KeeperException
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static boolean trimProcQuotas(ZooKeeper zk, String path)
+            throws KeeperException, IOException, InterruptedException {
+        if (Quotas.quotaZookeeper.equals(path)) {
+            return true;
+        }
+        List<String> children = zk.getChildren(path, false);
+        if (children.size() == 0) {
+            zk.delete(path, -1);
+            String parent = path.substring(0, path.lastIndexOf('/'));
+            return trimProcQuotas(zk, parent);
+        } else {
+            return true;
+        }
+    }
 }
