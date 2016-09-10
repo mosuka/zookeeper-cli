@@ -23,7 +23,7 @@ import org.apache.zookeeper.ZKUtil;
 import org.apache.zookeeper.ZooKeeper;
 
 public class DeleteCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
+    public static final String DEFAULT_PATH = "";
     public static final int DEFAULT_VERSION = -1;
     public static final boolean DEFAULT_RECURSIVE = false;
 
