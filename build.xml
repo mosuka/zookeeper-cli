@@ -125,7 +125,13 @@
     </copy>
   	<chmod file="${package.dir}/${project}-${version}/bin/*.sh" perm="755"/>
     <tar destfile="${package.dir}/${project}-${version}.tgz" compression="gzip" longfile="gnu">
-      <tarfileset dir="${package.dir}" includes="**" />
+      <!--<tarfileset dir="${package.dir}" includes="**"/>-->
+      <tarfileset dir="${package.dir}" mode="0755">
+      	<include name="**/*.sh"/>
+      </tarfileset>
+        <tarfileset dir="${package.dir}">
+        	<exclude name="**/*.sh"/>
+        </tarfileset>
     </tar>
   </target>
 </project>
