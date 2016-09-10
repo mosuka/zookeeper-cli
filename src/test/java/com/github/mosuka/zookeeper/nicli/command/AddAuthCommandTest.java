@@ -11,7 +11,7 @@ public class AddAuthCommandTest extends ZooKeeperTestBase {
     @Test
     public void testExecute() {
         Map<String, Object> parameters = new LinkedHashMap<String, Object>();
-        parameters.put("zookeeper_server", zkServerStr);
+        parameters.put("server", zkServerStr);
         parameters.put("session_timeout", sessionTimeout);
         parameters.put("pretty_print", false);
         parameters.put("scheme", "digest");

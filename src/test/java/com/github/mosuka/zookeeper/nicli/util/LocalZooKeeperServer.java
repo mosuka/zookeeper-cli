@@ -38,8 +38,11 @@ public class LocalZooKeeperServer implements Closeable {
         this(getFreePort());
     }
 
-    public LocalZooKeeperServer(int port) {
+    public LocalZooKeeperServer(int port) throws IOException {
         setPort(port);
+        Path dataDir = Files.createTempDirectory(this.getClass().getSimpleName());
+        setDataDir(dataDir);
+        getDataDir().toFile().deleteOnExit();
     }
 
     public int getPort() {
@@ -101,9 +104,6 @@ public class LocalZooKeeperServer implements Closeable {
 
     public void start() throws IOException, ConfigException, InterruptedException {
         log.info("Starting Zookeeper on port {}", port);
-
-        setDataDir(Files.createTempDirectory(this.getClass().getSimpleName()));
-        getDataDir().toFile().deleteOnExit();
 
         Properties properties = new Properties();
         properties.setProperty("dataDir", getDataDir().toAbsolutePath().toString());

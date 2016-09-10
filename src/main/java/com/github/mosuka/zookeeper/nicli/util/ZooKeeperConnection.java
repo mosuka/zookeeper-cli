@@ -25,14 +25,14 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 
 public class ZooKeeperConnection {
-    private static final String DEFAULT_ZOOKEEPER_SERVER = "localhost:2181";
+    private static final String DEFAULT_SERVER = "localhost:2181";
     private static final int DEFAULT_SESSION_TIMEOUT = 3000;
 
     final CountDownLatch connSignal = new CountDownLatch(1);
     private ZooKeeper zookeeper;
 
     public ZooKeeperConnection() throws IOException, InterruptedException {
-        this(DEFAULT_ZOOKEEPER_SERVER, DEFAULT_SESSION_TIMEOUT);
+        this(DEFAULT_SERVER, DEFAULT_SESSION_TIMEOUT);
     }
 
     public ZooKeeperConnection(String zookeeperServer, int sessionTimeout) throws IOException, InterruptedException {
