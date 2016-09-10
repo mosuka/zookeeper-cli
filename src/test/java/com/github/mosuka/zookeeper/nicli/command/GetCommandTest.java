@@ -15,6 +15,22 @@ public class GetCommandTest extends ZooKeeperTestBase {
     public void before() throws Exception {
         super.before();
         zkConnection = new ZooKeeperConnection(server, sessionTimeout);
+
+        // repare the data
+        Map<String, Object> parameters = new LinkedHashMap<String, Object>();
+        parameters.put("server", server);
+        parameters.put("session_timeout", sessionTimeout);
+        parameters.put("pretty_print", false);
+        parameters.put("path", "/test");
+        parameters.put("data", "This is test.");
+        parameters.put("acl", "");
+        parameters.put("ephemeral", false);
+        parameters.put("sequential", false);
+        parameters.put("parents", false);
+        parameters.put("watch", false);
+
+        CreateCommand command = new CreateCommand();
+        command.execute(parameters);
     }
 
     @Override
@@ -29,7 +45,7 @@ public class GetCommandTest extends ZooKeeperTestBase {
         parameters.put("server", server);
         parameters.put("session_timeout", sessionTimeout);
         parameters.put("pretty_print", false);
-        parameters.put("path", "/");
+        parameters.put("path", "/test");
         parameters.put("watch", false);
         parameters.put("with_stat", false);
 

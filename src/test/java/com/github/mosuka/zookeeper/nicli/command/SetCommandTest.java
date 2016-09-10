@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperConnection;
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperTestBase;
 
-public class DeleteCommandTest extends ZooKeeperTestBase {
+public class SetCommandTest extends ZooKeeperTestBase {
     public ZooKeeperConnection zkConnection = null;
 
     @Override
@@ -46,12 +46,13 @@ public class DeleteCommandTest extends ZooKeeperTestBase {
         parameters.put("session_timeout", sessionTimeout);
         parameters.put("pretty_print", false);
         parameters.put("path", "/test");
+        parameters.put("data", "This is new data.");
         parameters.put("version", -1);
-        parameters.put("recursive", false);
+        parameters.put("with_stat", false);
 
         int statusCode = Command.STATUS_SUCCESS;
 
-        DeleteCommand command = new DeleteCommand();
+        SetCommand command = new SetCommand();
         try {
             statusCode = command.execute(parameters);
         } catch (Exception e) {
