@@ -183,9 +183,9 @@ public class ZooKeeperNonInteractiveCLI {
         Subparser addAuthCommandSubparser = subpersers.addParser("addauth").help("add auth.").setDefault("command",
                 new AddAuthCommand("addauth"));
         addAuthCommandSubparser.addArgument("scheme").metavar("SCHEME").type(String.class)
-                .setDefault(AddAuthCommand.DEFAULT_SCHEME).help("specify scheme.");
+                .setDefault(AddAuthCommand.DEFAULT_SCHEME).help("specify the scheme.");
         addAuthCommandSubparser.addArgument("auth").metavar("AUTH").type(String.class)
-                .setDefault(AddAuthCommand.DEFAULT_AUTH).help("specify auth.");
+                .setDefault(AddAuthCommand.DEFAULT_AUTH).help("specify the auth.");
 
         /*
          * listquota command
