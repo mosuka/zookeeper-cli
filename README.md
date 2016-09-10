@@ -37,7 +37,7 @@ Please extract package/zookeeper-cli-0.1.0.tgz in any directory.
 ## Show help
 
 ```
-$ ./bin/zkCli.sh -h
+$ ./bin/zkNiCli.sh -h
 usage: java zookeeper-cli.jar [-h] [-s SERVER] [-t SESSION_TIMEOUT] [-p] COMMAND ...
 
 optional arguments:
@@ -70,7 +70,7 @@ Available Commands:
 This is an example for ls command help.
 
 ```
-$ ./bin/zkCli.sh ls -h
+$ ./bin/zkNiCli.sh ls -h
 usage: java zookeeper-cli.jar ls [-h] [-w] [-s] [PATH]
 
 positional arguments:
@@ -87,7 +87,7 @@ optional arguments:
 This is an example for ls command.
 
 ```
-$ ./bin/zkCli.sh -p ls -s /
+$ ./bin/zkNiCli.sh -p ls -s /
 {
   "request" : {
     "command" : "ls",
