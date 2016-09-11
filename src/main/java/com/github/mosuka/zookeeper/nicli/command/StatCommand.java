@@ -50,7 +50,7 @@ public class StatCommand extends Command {
         try {
             Stat stat = zk.exists(path, watch);
             if (stat == null) {
-                throw KeeperException.NodeExistsException.create(Code.NONODE, path);
+                throw KeeperException.NoNodeException.create(Code.NONODE, path);
             }
             statMap = StatUtil.stat2Map(stat);
 
