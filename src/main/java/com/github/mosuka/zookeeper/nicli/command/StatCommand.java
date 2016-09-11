@@ -56,7 +56,10 @@ public class StatCommand extends Command {
 
             setStatus(Command.STATUS_SUCCESS);
             setMessage(Command.SUCCESS_MESSAGE);
-        } catch (KeeperException | InterruptedException e) {
+        } catch (KeeperException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (InterruptedException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

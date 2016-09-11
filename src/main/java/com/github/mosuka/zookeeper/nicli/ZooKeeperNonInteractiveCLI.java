@@ -49,10 +49,11 @@ public class ZooKeeperNonInteractiveCLI {
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
         argumentParser.addArgument("-s", "--server").type(String.class).setDefault(Command.DEFAULT_SERVER)
                 .help("specify ZooKeeper host and port. ex) localhost:2181");
-        argumentParser.addArgument("-t", "--session-timeout").type(Integer.class)
-                .setDefault(Command.DEFAULT_SESSION_TIMEOUT).help("specify session timeout[ms].");
-        argumentParser.addArgument("-p", "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
-                .action(storeTrue()).help("pretty print.");
+        argumentParser.addArgument("-t", "--timeout").type(Integer.class).setDefault(Command.DEFAULT_TIMEOUT)
+                .help("specify session timeout[ms].");
+        // argumentParser.addArgument("-p",
+        // "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
+        // .action(storeTrue()).help("pretty print.");
 
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 

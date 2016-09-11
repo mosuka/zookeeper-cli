@@ -34,9 +34,8 @@
     <dependency org="org.slf4j" name="slf4j-api" rev="1.6.1" conf="compile" />
     <dependency org="log4j" name="log4j" rev="1.2.16" conf="compile" />
 
-    <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.8.2" conf="compile" />
-    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.8.2" conf="compile" />
-    <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.8.2" conf="compile" />
+    <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13" conf="compile" />
+    <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13" conf="compile" />
     <dependency org="net.sourceforge.argparse4j" name="argparse4j" rev="0.7.0" conf="compile" />
 
     <!-- Dependencies for test -->

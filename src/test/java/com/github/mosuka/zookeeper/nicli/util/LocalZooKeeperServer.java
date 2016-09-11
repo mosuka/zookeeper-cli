@@ -4,11 +4,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Properties;
 
 import org.apache.zookeeper.server.DatadirCleanupManager;
@@ -27,7 +22,7 @@ public class LocalZooKeeperServer implements Closeable {
     private static int DEFAULT_PORT = 2181;
 
     private int port;
-    private Path dataDir;
+    private File dataDir;
     private DatadirCleanupManager cleanupManager;
     private ZooKeeperServer zkServer;
     private FileTxnSnapLog transactionLog;
@@ -40,9 +35,9 @@ public class LocalZooKeeperServer implements Closeable {
 
     public LocalZooKeeperServer(int port) throws IOException {
         setPort(port);
-        Path dataDir = Files.createTempDirectory(this.getClass().getSimpleName());
+        File dataDir = new File(System.getProperty("java.io.tmpdir"));
         setDataDir(dataDir);
-        getDataDir().toFile().deleteOnExit();
+        getDataDir().deleteOnExit();
     }
 
     public int getPort() {
@@ -53,11 +48,11 @@ public class LocalZooKeeperServer implements Closeable {
         this.port = port;
     }
 
-    public Path getDataDir() {
+    public File getDataDir() {
         return dataDir;
     }
 
-    public void setDataDir(Path dataDir) {
+    public void setDataDir(File dataDir) {
         this.dataDir = dataDir;
     }
 
@@ -83,30 +78,29 @@ public class LocalZooKeeperServer implements Closeable {
         return freePort;
     }
 
-    private void cleanUpDataDir() throws IOException {
-        if (getDataDir() != null && Files.exists(getDataDir())) {
-            Files.walkFileTree(getDataDir(), new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
+    private void clean(File root) throws IOException {
+        if (root != null && root.exists()) {
+            if (root.isFile()) {
+                if (root.exists()) {
+                    root.delete();
                 }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
+            } else if (root.isDirectory()) {
+                File[] files = root.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    clean(files[i]);
                 }
-            });
+                if (root.exists()) {
+                    root.delete();
+                }
+            }
         }
-        setDataDir(null);
     }
 
     public void start() throws IOException, ConfigException, InterruptedException {
         log.info("Starting Zookeeper on port {}", port);
 
         Properties properties = new Properties();
-        properties.setProperty("dataDir", getDataDir().toAbsolutePath().toString());
+        properties.setProperty("dataDir", getDataDir().getAbsolutePath());
         properties.setProperty("clientPort", Integer.toString(getPort()));
 
         QuorumPeerConfig quorumConfig = new QuorumPeerConfig();
@@ -163,6 +157,7 @@ public class LocalZooKeeperServer implements Closeable {
             cleanupManager.shutdown();
             cleanupManager = null;
         }
-        cleanUpDataDir();
+        clean(getDataDir());
+        setDataDir(null);
     }
 }

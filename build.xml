@@ -17,11 +17,11 @@
     limitations under the License.
  -->
 <project basedir="." default="compile" name="zookeeper-cli" xmlns:ivy="antlib:org.apache.ivy.ant">
-  <property name="target" value="1.8" />
-  <property name="source" value="1.8" />
+  <property name="target" value="1.5" />
+  <property name="source" value="1.5" />
 
   <property name="project" value="zookeeper-cli" />
-  <property name="version" value="0.1.1" />
+  <property name="version" value="0.1.2" />
 
   <property name="target.dir" value="target" />
   <property name="build.dir" value="${target.dir}/classes" />

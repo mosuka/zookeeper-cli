@@ -11,7 +11,7 @@ public class ZooKeeperTestBase extends Assert {
     public static LocalZooKeeperServer localZkServer;
 
     public String server = null;
-    public int sessionTimeout = 1000;
+    public int timeout = 1000;
 
     @BeforeClass
     public static void beforeClass() throws Exception {

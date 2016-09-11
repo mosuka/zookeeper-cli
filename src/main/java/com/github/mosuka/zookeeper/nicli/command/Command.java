@@ -21,16 +21,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.github.mosuka.zookeeper.nicli.util.ZooKeeperConnection;
 
 public class Command implements CommandImpl {
     public static final String DEFAULT_SERVER = "localhost:2181";
-    public static final int DEFAULT_SESSION_TIMEOUT = 3000;
-    public static final boolean DEFAULT_PRETTY_PRINT = false;
+    public static final int DEFAULT_TIMEOUT = 3000;
+    // public static final boolean DEFAULT_PRETTY_PRINT = false;
 
     public static final String SUCCESS_MESSAGE = "Success";
     public static final int STATUS_SUCCESS = 0;
@@ -86,8 +86,8 @@ public class Command implements CommandImpl {
         responseMap.put(key, value);
     }
 
-    public void connect(String zookeeperServer, int sessionTimeout) throws IOException, InterruptedException {
-        zkConnection = new ZooKeeperConnection(zookeeperServer, sessionTimeout);
+    public void connect(String server, int timeout) throws IOException, InterruptedException {
+        zkConnection = new ZooKeeperConnection(server, timeout);
     }
 
     public void run(Map<String, Object> parameters) {
@@ -95,12 +95,13 @@ public class Command implements CommandImpl {
         setMessage(SUCCESS_MESSAGE);
     }
 
-    public void output(Map<String, Object> parameters)
-            throws JsonGenerationException, JsonMappingException, IOException {
-        output(parameters, DEFAULT_PRETTY_PRINT);
-    }
+    // public void output(Map<String, Object> parameters)
+    // throws JsonGenerationException, JsonMappingException, IOException {
+    // output(parameters, DEFAULT_PRETTY_PRINT);
+    // }
 
-    public void output(Map<String, Object> parameters, boolean prettyPrint)
+    // public void output(Map<String, Object> parameters, boolean prettyPrint)
+    public void output(Map<String, Object> parameters)
             throws JsonGenerationException, JsonMappingException, IOException {
         requestMap.put("command", getName());
         requestMap.put("parameters", parameters);
@@ -114,9 +115,9 @@ public class Command implements CommandImpl {
         resultMap.put("response", responseMap);
 
         ObjectMapper mapper = new ObjectMapper();
-        if (prettyPrint) {
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        }
+        // if (prettyPrint) {
+        // mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        // }
 
         resultJSON = mapper.writeValueAsString(resultMap);
         System.out.println(resultJSON);
@@ -129,20 +130,24 @@ public class Command implements CommandImpl {
     @Override
     public int execute(Map<String, Object> parameters) throws Exception {
         String server = parameters.containsKey("server") ? (String) parameters.get("server") : DEFAULT_SERVER;
-        int sesstionTimeout = parameters.containsKey("session_timeout") ? (Integer) parameters.get("session_timeout")
-                : DEFAULT_SESSION_TIMEOUT;
-        boolean prettyPrint = parameters.containsKey("pretty_print") ? (Boolean) parameters.get("pretty_print")
-                : DEFAULT_PRETTY_PRINT;
+        int timeout = parameters.containsKey("timeout") ? (Integer) parameters.get("timeout") : DEFAULT_TIMEOUT;
+        // boolean prettyPrint = parameters.containsKey("pretty_print") ?
+        // (Boolean) parameters.get("pretty_print")
+        // : DEFAULT_PRETTY_PRINT;
 
         try {
-            connect(server, sesstionTimeout);
+            connect(server, timeout);
             run(parameters);
             close();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            setStatus(STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (InterruptedException e) {
             setStatus(STATUS_ERROR);
             setMessage(e.getMessage());
         } finally {
-            output(parameters, prettyPrint);
+            // output(parameters, prettyPrint);
+            output(parameters);
         }
 
         return getStatus();

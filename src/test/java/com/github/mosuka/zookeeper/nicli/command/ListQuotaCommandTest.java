@@ -14,13 +14,12 @@ public class ListQuotaCommandTest extends ZooKeeperTestBase {
     @Override
     public void before() throws Exception {
         super.before();
-        zkConnection = new ZooKeeperConnection(server, sessionTimeout);
+        zkConnection = new ZooKeeperConnection(server, timeout);
 
         // prepare the data
         Map<String, Object> parameters = new LinkedHashMap<String, Object>();
         parameters.put("server", server);
-        parameters.put("session_timeout", sessionTimeout);
-        parameters.put("pretty_print", false);
+        parameters.put("timeout", timeout);
         parameters.put("path", "/test");
         parameters.put("data", "This is test.");
         parameters.put("acl", "");
@@ -34,8 +33,7 @@ public class ListQuotaCommandTest extends ZooKeeperTestBase {
 
         Map<String, Object> parameters2 = new LinkedHashMap<String, Object>();
         parameters2.put("server", server);
-        parameters2.put("session_timeout", sessionTimeout);
-        parameters2.put("pretty_print", false);
+        parameters2.put("timeout", timeout);
         parameters2.put("path", "/test");
         parameters2.put("bytes", 10L);
         parameters2.put("num_nodes", -1);
@@ -54,8 +52,7 @@ public class ListQuotaCommandTest extends ZooKeeperTestBase {
     public void testExecute() {
         Map<String, Object> parameters = new LinkedHashMap<String, Object>();
         parameters.put("server", server);
-        parameters.put("session_timeout", sessionTimeout);
-        parameters.put("pretty_print", false);
+        parameters.put("timeout", timeout);
         parameters.put("path", "/test");
 
         int statusCode = Command.STATUS_SUCCESS;

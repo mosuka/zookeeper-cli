@@ -39,4 +39,4 @@ ${JAVA_HOME}/bin/java -Dzookeeper.log.dir="${ZOO_LOG_DIR}" \
                       -Dzookeeper.root.logger="${ZOO_LOG4J_PROP}" \
                       -Dzookeeper.log.file="${ZOO_LOG_FILE}" \
                       -Dlog4j.configuration="${ZOO_LOG4J_PROP_FILE}" \
-                      -jar "${ZOOBINDIR}/../zookeeper-cli-0.1.1.jar" "$@"
+                      -jar "${ZOOBINDIR}/../zookeeper-cli-0.1.2.jar" "$@"
