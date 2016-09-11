@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
@@ -48,6 +49,9 @@ public class StatCommand extends Command {
 
         try {
             Stat stat = zk.exists(path, watch);
+            if (stat == null) {
+                throw KeeperException.NodeExistsException.create(Code.NONODE, path);
+            }
             statMap = StatUtil.stat2Map(stat);
 
             if (!statMap.isEmpty()) {
