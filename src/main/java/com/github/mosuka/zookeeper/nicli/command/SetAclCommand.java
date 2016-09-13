@@ -65,7 +65,7 @@ public class SetAclCommand extends Command {
             statMap = StatUtil.stat2Map(stat);
 
             if (!statMap.isEmpty() && withStat) {
-                addResponse("stat", statMap);
+                putResponse("stat", statMap);
             }
 
             setStatus(Command.STATUS_SUCCESS);

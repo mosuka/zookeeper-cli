@@ -55,7 +55,7 @@ public class StatCommand extends Command {
             statMap = StatUtil.stat2Map(stat);
 
             if (!statMap.isEmpty()) {
-                addResponse("stat", statMap);
+                putResponse("stat", statMap);
             }
 
             setStatus(Command.STATUS_SUCCESS);

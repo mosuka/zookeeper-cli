@@ -35,8 +35,27 @@ ZOO_LOG4J_PROP_FILE="file://${ZOOBINDIR}/../conf/log4j.properties"
 ZOO_LOG_FILE="zookeeper-$USER-cli-$HOSTNAME.log"
 ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
 
-${JAVA_HOME}/bin/java -Dzookeeper.log.dir="${ZOO_LOG_DIR}" \
-                      -Dzookeeper.root.logger="${ZOO_LOG4J_PROP}" \
-                      -Dzookeeper.log.file="${ZOO_LOG_FILE}" \
-                      -Dlog4j.configuration="${ZOO_LOG4J_PROP_FILE}" \
-                      -jar "${ZOOBINDIR}/../zookeeper-cli-0.1.2.jar" "$@"
+# JAVA
+if [ "$JAVA_HOME" != "" ]; then
+  JAVA="$JAVA_HOME/bin/java"
+else
+  JAVA=java
+fi
+
+# CLASSPATH
+for i in "$ZOOBINDIR"/../zookeeper-*.jar
+do
+  CLASSPATH="$i:$CLASSPATH"
+done
+for i in "$ZOOBINDIR"/../lib/*.jar
+do
+    CLASSPATH="$i:$CLASSPATH"
+done
+
+${JAVA} -Dzookeeper.log.dir="${ZOO_LOG_DIR}" \
+        -Dzookeeper.root.logger="${ZOO_LOG4J_PROP}" \
+        -Dzookeeper.log.file="${ZOO_LOG_FILE}" \
+        -Dlog4j.configuration="${ZOO_LOG4J_PROP_FILE}" \
+        -cp "$CLASSPATH" $CLIENT_JVM $CLIENT_JVMFLAGS $JVMFLAGS \
+        com.github.mosuka.zookeeper.nicli.ZooKeeperNonInteractiveCLI "$@"
+                      

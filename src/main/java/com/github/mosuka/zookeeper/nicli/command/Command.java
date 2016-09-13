@@ -30,7 +30,8 @@ import com.github.mosuka.zookeeper.nicli.util.ZooKeeperConnection;
 public class Command implements CommandImpl {
     public static final String DEFAULT_SERVER = "localhost:2181";
     public static final int DEFAULT_TIMEOUT = 3000;
-    // public static final boolean DEFAULT_PRETTY_PRINT = false;
+    public static final boolean DEFAULT_WITH_REQUEST = false;
+    public static final boolean DEFAULT_PRETTY_PRINT = false;
 
     public static final String SUCCESS_MESSAGE = "Success";
     public static final int STATUS_SUCCESS = 0;
@@ -43,8 +44,7 @@ public class Command implements CommandImpl {
     final CountDownLatch countDownLatch = new CountDownLatch(1);
     private ZooKeeperConnection zkConnection = null;
 
-    private Map<String, Object> requestMap = new LinkedHashMap<String, Object>();
-    private Map<String, Object> responseMap = new LinkedHashMap<String, Object>();
+    private Map<String, Object> response = new LinkedHashMap<String, Object>();
 
     public Command() {
         this("");
@@ -82,8 +82,16 @@ public class Command implements CommandImpl {
         return zkConnection;
     }
 
-    public void addResponse(String key, Object value) {
-        responseMap.put(key, value);
+    public Map<String, Object> getResponse() {
+        return response;
+    }
+
+    public void setResponse(Map<String, Object> responseMap) {
+        this.response = responseMap;
+    }
+
+    public void putResponse(String key, Object value) {
+        response.put(key, value);
     }
 
     public void connect(String server, int timeout) throws IOException, InterruptedException {
@@ -95,32 +103,40 @@ public class Command implements CommandImpl {
         setMessage(SUCCESS_MESSAGE);
     }
 
-    // public void output(Map<String, Object> parameters)
-    // throws JsonGenerationException, JsonMappingException, IOException {
-    // output(parameters, DEFAULT_PRETTY_PRINT);
-    // }
-
-    // public void output(Map<String, Object> parameters, boolean prettyPrint)
     public void output(Map<String, Object> parameters)
             throws JsonGenerationException, JsonMappingException, IOException {
-        requestMap.put("command", getName());
-        requestMap.put("parameters", parameters);
+        output(parameters, DEFAULT_WITH_REQUEST);
+    }
 
-        responseMap.put("status", getStatus());
-        responseMap.put("message", getMessage());
+    public void output(Map<String, Object> parameters, boolean withRequest)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        output(parameters, withRequest, DEFAULT_PRETTY_PRINT);
+    }
 
-        String resultJSON = null;
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        resultMap.put("request", requestMap);
-        resultMap.put("response", responseMap);
+    public void output(Map<String, Object> parameters, boolean withRequest, boolean prettyPrint)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        Map<String, Object> result = new LinkedHashMap<String, Object>();
+
+        // put request to result
+        if (withRequest) {
+            Map<String, Object> request = new LinkedHashMap<String, Object>();
+            request.put("command", getName());
+            request.put("parameters", parameters);
+            result.put("request", request);
+        }
+
+        // put response to result
+        putResponse("status", getStatus());
+        putResponse("message", getMessage());
+        result.put("response", getResponse());
 
         ObjectMapper mapper = new ObjectMapper();
-        // if (prettyPrint) {
-        // mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        // }
-
-        resultJSON = mapper.writeValueAsString(resultMap);
-        System.out.println(resultJSON);
+        if (prettyPrint) {
+            // enable pretty print
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
+        } else {
+            System.out.println(mapper.writeValueAsString(result));
+        }
     }
 
     public void close() throws InterruptedException {
@@ -131,9 +147,10 @@ public class Command implements CommandImpl {
     public int execute(Map<String, Object> parameters) throws Exception {
         String server = parameters.containsKey("server") ? (String) parameters.get("server") : DEFAULT_SERVER;
         int timeout = parameters.containsKey("timeout") ? (Integer) parameters.get("timeout") : DEFAULT_TIMEOUT;
-        // boolean prettyPrint = parameters.containsKey("pretty_print") ?
-        // (Boolean) parameters.get("pretty_print")
-        // : DEFAULT_PRETTY_PRINT;
+        boolean withRequest = parameters.containsKey("with_request") ? (Boolean) parameters.get("with_request")
+                : DEFAULT_WITH_REQUEST;
+        boolean prettyPrint = parameters.containsKey("pretty_print") ? (Boolean) parameters.get("pretty_print")
+                : DEFAULT_PRETTY_PRINT;
 
         try {
             connect(server, timeout);
@@ -146,8 +163,7 @@ public class Command implements CommandImpl {
             setStatus(STATUS_ERROR);
             setMessage(e.getMessage());
         } finally {
-            // output(parameters, prettyPrint);
-            output(parameters);
+            output(parameters, withRequest, prettyPrint);
         }
 
         return getStatus();

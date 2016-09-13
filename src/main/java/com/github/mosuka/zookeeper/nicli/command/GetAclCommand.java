@@ -56,11 +56,11 @@ public class GetAclCommand extends Command {
             statMap = StatUtil.stat2Map(stat);
 
             if (!aclObjList.isEmpty()) {
-                addResponse("acl", ACLUtil.acl2List(aclObjList));
+                putResponse("acl", ACLUtil.acl2List(aclObjList));
             }
 
             if (!statMap.isEmpty() && withStat) {
-                addResponse("stat", statMap);
+                putResponse("stat", statMap);
             }
 
             setStatus(Command.STATUS_SUCCESS);

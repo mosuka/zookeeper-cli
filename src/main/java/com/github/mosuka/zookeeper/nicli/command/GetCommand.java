@@ -55,9 +55,9 @@ public class GetCommand extends Command {
             data = (data == null) ? "null".getBytes() : data;
             statMap = StatUtil.stat2Map(stat);
 
-            addResponse("data", new String(data));
+            putResponse("data", new String(data));
             if (!statMap.isEmpty() && withStat) {
-                addResponse("stat", statMap);
+                putResponse("stat", statMap);
             }
 
             setStatus(Command.STATUS_SUCCESS);

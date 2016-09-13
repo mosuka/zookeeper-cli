@@ -61,9 +61,9 @@ public class LsCommand extends Command {
                 children = zk.getChildren(path, watch);
             }
 
-            addResponse("children", children);
+            putResponse("children", children);
             if (!statMap.isEmpty()) {
-                addResponse("stat", statMap);
+                putResponse("stat", statMap);
             }
 
             setStatus(Command.STATUS_SUCCESS);

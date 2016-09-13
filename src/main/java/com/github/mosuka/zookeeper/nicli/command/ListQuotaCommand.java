@@ -53,7 +53,7 @@ public class ListQuotaCommand extends Command {
             quotaMap.put("path", quotaPath);
             quotaMap.put("count", quotaStatsTrack.getCount());
             quotaMap.put("bytes", quotaStatsTrack.getBytes());
-            addResponse("quota", quotaMap);
+            putResponse("quota", quotaMap);
 
             Stat statStat = new Stat();
             byte[] statData = zk.getData(statPath, false, statStat);
@@ -62,7 +62,7 @@ public class ListQuotaCommand extends Command {
             statMap.put("path", statPath);
             statMap.put("count", statStatsTrack.getCount());
             statMap.put("bytes", statStatsTrack.getBytes());
-            addResponse("stat", statMap);
+            putResponse("stat", statMap);
 
             setStatus(Command.STATUS_SUCCESS);
             setMessage(Command.SUCCESS_MESSAGE);

@@ -119,7 +119,7 @@ public class CreateCommand extends Command {
                 newPath = zk.create(path, byteData, aclObj, createMode);
             }
 
-            addResponse("new_path", newPath);
+            putResponse("new_path", newPath);
 
             setStatus(Command.STATUS_SUCCESS);
             setMessage(Command.SUCCESS_MESSAGE);

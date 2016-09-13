@@ -51,9 +51,10 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("specify ZooKeeper host and port. ex) localhost:2181");
         argumentParser.addArgument("-t", "--timeout").type(Integer.class).setDefault(Command.DEFAULT_TIMEOUT)
                 .help("specify session timeout[ms].");
-        // argumentParser.addArgument("-p",
-        // "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
-        // .action(storeTrue()).help("pretty print.");
+        argumentParser.addArgument("-r", "--with-request").type(Boolean.class).setDefault(Command.DEFAULT_WITH_REQUEST)
+                .action(storeTrue()).help("includes the request along with the data.");
+        argumentParser.addArgument("-p", "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
+                .action(storeTrue()).help("pretty print.");
 
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 

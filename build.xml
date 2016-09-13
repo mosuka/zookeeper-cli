@@ -98,15 +98,7 @@
     <copy todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}" />
     </copy>
-    <pathconvert property="manifest.classpath" refid="run.classpath" targetos="unix" pathsep=" ">
-        <map from="${basedir}/${lib.dir}" to="./lib" />
-    </pathconvert>
-    <jar destfile="${dist.dir}/${project}-${version}.jar" basedir="${build.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="com.github.mosuka.zookeeper.nicli.ZooKeeperNonInteractiveCLI"/>
-        <attribute name="Class-Path"  value="${manifest.classpath}"/>
-      </manifest>
-    </jar>
+    <jar destfile="${dist.dir}/${project}-${version}.jar" basedir="${build.dir}" />
   </target>
 
   <target name="package" description="Create package." depends="jar">
@@ -125,7 +117,6 @@
     </copy>
   	<chmod file="${package.dir}/${project}-${version}/bin/*.sh" perm="755"/>
     <tar destfile="${package.dir}/${project}-${version}.tgz" compression="gzip" longfile="gnu">
-      <!--<tarfileset dir="${package.dir}" includes="**"/>-->
       <tarfileset dir="${package.dir}" mode="0755">
       	<include name="**/*.sh"/>
       </tarfileset>
