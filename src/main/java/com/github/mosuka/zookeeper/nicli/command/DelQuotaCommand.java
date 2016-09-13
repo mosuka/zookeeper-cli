@@ -29,7 +29,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.QuotaUtil;
 
 public class DelQuotaCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_BYTES = false;
     public static final boolean DEFAULT_NUM_NODES = false;
 
@@ -43,14 +42,14 @@ public class DelQuotaCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        boolean bytes = parameters.containsKey("bytes") ? (Boolean) parameters.get("bytes") : DEFAULT_BYTES;
-        boolean numNodes = parameters.containsKey("num_nodes") ? (Boolean) parameters.get("num_nodes")
-                : DEFAULT_NUM_NODES;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
+            String path = (String) parameters.get("path");
+            boolean bytes = parameters.containsKey("bytes") ? (Boolean) parameters.get("bytes") : DEFAULT_BYTES;
+            boolean numNodes = parameters.containsKey("num_nodes") ? (Boolean) parameters.get("num_nodes")
+                    : DEFAULT_NUM_NODES;
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
             String parentPath = Quotas.quotaZookeeper + path;
             String quotaPath = Quotas.quotaZookeeper + path + "/" + Quotas.limitNode;
 
@@ -70,14 +69,10 @@ public class DelQuotaCommand extends Command {
                 strack.setCount(-1);
                 zk.setData(quotaPath, strack.toString().getBytes(), -1);
             } else if (bytes && numNodes) {
-                // delete till you can find a node with more than
-                // one child
                 List<String> children = zk.getChildren(parentPath, false);
-                /// delete the direct children first
                 for (String child : children) {
                     zk.delete(parentPath + "/" + child, -1);
                 }
-                // cut the tree till their is more than one child
                 QuotaUtil.trimProcQuotas(zk, parentPath);
             } else {
                 setStatus(Command.STATUS_ERROR);
@@ -94,6 +89,12 @@ public class DelQuotaCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (IOException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

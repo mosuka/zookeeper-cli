@@ -16,7 +16,6 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import com.github.mosuka.zookeeper.nicli.util.ACLUtil;
 import com.github.mosuka.zookeeper.nicli.util.StatUtil;
 
 public class GetAclCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_WITH_STAT = false;
 
     public GetAclCommand() {
@@ -42,25 +40,21 @@ public class GetAclCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        Map<String, Object> statMap = new LinkedHashMap<String, Object>();
-
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
-                : DEFAULT_WITH_STAT;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
+            String path = (String) parameters.get("path");
+            boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
+                    : DEFAULT_WITH_STAT;
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
             Stat stat = new Stat();
-            List<ACL> aclObjList = zk.getACL(path, stat);
-            statMap = StatUtil.stat2Map(stat);
+            List<ACL> acl = zk.getACL(path, stat);
 
-            if (!aclObjList.isEmpty()) {
-                putResponse("acl", ACLUtil.acl2List(aclObjList));
+            if (acl != null) {
+                putResponse("acl", ACLUtil.acl2List(acl));
             }
-
-            if (!statMap.isEmpty() && withStat) {
-                putResponse("stat", statMap);
+            if (stat != null && withStat) {
+                putResponse("stat", StatUtil.stat2Map(stat));
             }
 
             setStatus(Command.STATUS_SUCCESS);
@@ -69,6 +63,12 @@ public class GetAclCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

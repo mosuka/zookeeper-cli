@@ -37,12 +37,12 @@ public class DeleteCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        int version = parameters.containsKey("version") ? (Integer) parameters.get("version") : DEFAULT_VERSION;
-        boolean recursive = parameters.containsKey("recursive") ? (Boolean) parameters.get("recursive")
-                : DEFAULT_RECURSIVE;
-
         try {
+            String path = (String) parameters.get("path");
+            int version = parameters.containsKey("version") ? (Integer) parameters.get("version") : DEFAULT_VERSION;
+            boolean recursive = parameters.containsKey("recursive") ? (Boolean) parameters.get("recursive")
+                    : DEFAULT_RECURSIVE;
+
             ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
             if (recursive) {
@@ -57,6 +57,12 @@ public class DeleteCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

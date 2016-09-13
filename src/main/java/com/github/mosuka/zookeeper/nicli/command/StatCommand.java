@@ -16,7 +16,6 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.zookeeper.KeeperException;
@@ -27,7 +26,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.StatUtil;
 
 public class StatCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_WATCH = false;
 
     public StatCommand() {
@@ -40,22 +38,17 @@ public class StatCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        Map<String, Object> statMap = new LinkedHashMap<String, Object>();
-
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
-            Stat stat = zk.exists(path, watch);
-            if (stat == null) {
-                throw KeeperException.NoNodeException.create(Code.NONODE, path);
-            }
-            statMap = StatUtil.stat2Map(stat);
+            String path = (String) parameters.get("path");
+            boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
 
-            if (!statMap.isEmpty()) {
-                putResponse("stat", statMap);
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
+            Stat stat = zk.exists(path, watch);
+            if (stat != null) {
+                putResponse("stat", StatUtil.stat2Map(stat));
+            } else {
+                throw KeeperException.NoNodeException.create(Code.NONODE, path);
             }
 
             setStatus(Command.STATUS_SUCCESS);
@@ -64,6 +57,12 @@ public class StatCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

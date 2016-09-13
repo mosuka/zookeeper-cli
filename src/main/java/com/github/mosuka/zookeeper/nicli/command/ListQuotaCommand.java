@@ -26,8 +26,6 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 public class ListQuotaCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
-
     public ListQuotaCommand() {
         this("listquota");
     }
@@ -38,13 +36,13 @@ public class ListQuotaCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        String quotaPath = Quotas.quotaZookeeper + path + "/" + Quotas.limitNode;
-        String statPath = Quotas.quotaZookeeper + path + "/" + Quotas.statNode;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
+        String path = null;
         try {
+            path = (String) parameters.get("path");
+            String quotaPath = Quotas.quotaZookeeper + path + "/" + Quotas.limitNode;
+            String statPath = Quotas.quotaZookeeper + path + "/" + Quotas.statNode;
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
             Stat quotaStat = new Stat();
             byte[] quotaData = zk.getData(quotaPath, false, quotaStat);
@@ -70,6 +68,12 @@ public class ListQuotaCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage("quota for " + path + " does not exist.");
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

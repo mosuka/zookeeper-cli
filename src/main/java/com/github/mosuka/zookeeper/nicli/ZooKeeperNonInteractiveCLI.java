@@ -63,8 +63,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser lsCommandSubparser = subpersers.addParser("ls").help("list the znodes.").setDefault("command",
                 new LsCommand("ls"));
-        lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(LsCommand.DEFAULT_PATH)
-                .nargs("?").help("specify the znode path.");
+        lsCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         lsCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(LsCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("enable watcher.");
         lsCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class).setDefault(LsCommand.DEFAULT_WITH_STAT)
@@ -75,8 +74,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser statCommandSubparser = subpersers.addParser("stat").help("show stats of the znode.")
                 .setDefault("command", new StatCommand("stat"));
-        statCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(StatCommand.DEFAULT_PATH)
-                .help("specify the znode path.");
+        statCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         statCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(StatCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("gets the stat along with the data.");
 
@@ -85,8 +83,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser createCommandSubparser = subpersers.addParser("create").help("create the znode.")
                 .setDefault("command", new CreateCommand());
-        createCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(CreateCommand.DEFAULT_PATH).help("specify the znode path.");
+        createCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         createCommandSubparser.addArgument("data").metavar("DATA").type(String.class)
                 .setDefault(CreateCommand.DEFAULT_DATA).nargs("?")
                 .help("specify the data to be registered in the znode.");
@@ -109,8 +106,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser deleteCommandSubparser = subpersers.addParser("delete").help("delete the znodes.")
                 .setDefault("command", new DeleteCommand("delete"));
-        deleteCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(DeleteCommand.DEFAULT_PATH).help("specify the znode path.");
+        deleteCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         deleteCommandSubparser.addArgument("-v", "--version").type(Integer.class)
                 .setDefault(DeleteCommand.DEFAULT_VERSION).help("specify the znode version.");
         deleteCommandSubparser.addArgument("-r", "--recursive").type(Boolean.class)
@@ -121,8 +117,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser getCommandSubparser = subpersers.addParser("get").help("get the znodes.").setDefault("command",
                 new GetCommand("get"));
-        getCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(GetCommand.DEFAULT_PATH)
-                .help("specify the znode path.");
+        getCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         getCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(GetCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("enable watcher.");
         getCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class)
@@ -134,9 +129,8 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser setCommandSubparser = subpersers.addParser("set").help("set the znodes.").setDefault("command",
                 new SetCommand("set"));
-        setCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(SetCommand.DEFAULT_PATH)
-                .help("specify the znode path.");
-        setCommandSubparser.addArgument("data").metavar("DATA").type(String.class).setDefault(SetCommand.DEFAULT_DATA)
+        setCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
+        setCommandSubparser.addArgument("data").metavar("DATA").type(String.class)
                 .help("specify the data to be registered in the znode.");
         setCommandSubparser.addArgument("-v", "--version").type(Integer.class).setDefault(SetCommand.DEFAULT_VERSION)
                 .help("specify the znode version.");
@@ -149,16 +143,14 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser syncCommandSubparser = subpersers.addParser("sync").help("sync the znode.").setDefault("command",
                 new SyncCommand("sync"));
-        syncCommandSubparser.addArgument("path").metavar("PATH").type(String.class).setDefault(SyncCommand.DEFAULT_PATH)
-                .help("specify the znode path.");
+        syncCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
 
         /*
          * getacl command
          */
         Subparser getAclCommandSubparser = subpersers.addParser("getacl").help("get ACL of the znode.")
                 .setDefault("command", new GetAclCommand("getacl"));
-        getAclCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(GetAclCommand.DEFAULT_PATH).help("specify the znode path.");
+        getAclCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         getAclCommandSubparser.addArgument("-s", "--with-stat").type(Boolean.class)
                 .setDefault(GetAclCommand.DEFAULT_WITH_STAT).action(storeTrue())
                 .help("gets the stat along with the data.");
@@ -168,10 +160,8 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser setAclCommandSubparser = subpersers.addParser("setacl").help("set ACL of the znode.")
                 .setDefault("command", new GetAclCommand("setacl"));
-        setAclCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(SetAclCommand.DEFAULT_PATH).help("specify the znode path.");
+        setAclCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         setAclCommandSubparser.addArgument("acl").metavar("ACL").type(String.class)
-                .setDefault(SetAclCommand.DEFAULT_ACL)
                 .help("specify the access control list to be registered in the znode.");
         setAclCommandSubparser.addArgument("-v", "--version").type(Integer.class)
                 .setDefault(SetAclCommand.DEFAULT_VERSION).help("specify the znode version.");
@@ -184,10 +174,8 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser addAuthCommandSubparser = subpersers.addParser("addauth").help("add auth.").setDefault("command",
                 new AddAuthCommand("addauth"));
-        addAuthCommandSubparser.addArgument("scheme").metavar("SCHEME").type(String.class)
-                .setDefault(AddAuthCommand.DEFAULT_SCHEME).help("specify the scheme.");
-        addAuthCommandSubparser.addArgument("auth").metavar("AUTH").type(String.class)
-                .setDefault(AddAuthCommand.DEFAULT_AUTH).help("specify the auth.");
+        addAuthCommandSubparser.addArgument("scheme").metavar("SCHEME").type(String.class).help("specify the scheme.");
+        addAuthCommandSubparser.addArgument("auth").metavar("AUTH").type(String.class).help("specify the auth.");
 
         /*
          * listquota command
@@ -195,15 +183,14 @@ public class ZooKeeperNonInteractiveCLI {
         Subparser listQuotaCommandSubparser = subpersers.addParser("listquota").help("list quota.")
                 .setDefault("command", new ListQuotaCommand("listquota"));
         listQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(ListQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
+                .help("specify the znode path.");
 
         /*
          * setquota command
          */
         Subparser setQuotaCommandSubparser = subpersers.addParser("setquota").help("set quota.").setDefault("command",
                 new SetQuotaCommand("setquota"));
-        setQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(SetQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
+        setQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         MutuallyExclusiveGroup groupSetQuota = setQuotaCommandSubparser.addMutuallyExclusiveGroup().required(true);
         groupSetQuota.addArgument("-b", "--bytes").type(Long.class).setDefault(SetQuotaCommand.DEFAULT_BYTES)
                 .help("specify the bytes quota.");
@@ -215,8 +202,7 @@ public class ZooKeeperNonInteractiveCLI {
          */
         Subparser delQuotaCommandSubparser = subpersers.addParser("delquota").help("delete quota.")
                 .setDefault("command", new DelQuotaCommand("delquota"));
-        delQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class)
-                .setDefault(DelQuotaCommand.DEFAULT_PATH).help("specify the znode path.");
+        delQuotaCommandSubparser.addArgument("path").metavar("PATH").type(String.class).help("specify the znode path.");
         delQuotaCommandSubparser.addArgument("-b", "--bytes").type(Boolean.class)
                 .setDefault(DelQuotaCommand.DEFAULT_BYTES).action(storeTrue()).help("delete quota by bytes.");
         delQuotaCommandSubparser.addArgument("-n", "--num-nodes").type(Boolean.class)

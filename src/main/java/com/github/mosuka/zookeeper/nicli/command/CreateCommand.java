@@ -33,7 +33,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.ACLUtil;
 
 public class CreateCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final String DEFAULT_DATA = "";
     public static final String DEFAULT_ACL = "";
     public static final boolean DEFAULT_EPHEMERAL = false;
@@ -51,19 +50,19 @@ public class CreateCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        String data = parameters.containsKey("data") ? (String) parameters.get("data") : DEFAULT_DATA;
-        String acl = parameters.containsKey("acl") ? (String) parameters.get("acl") : DEFAULT_ACL;
-        boolean ephemeral = parameters.containsKey("ephemeral") ? (Boolean) parameters.get("ephemeral")
-                : DEFAULT_EPHEMERAL;
-        boolean sequential = parameters.containsKey("sequential") ? (Boolean) parameters.get("sequential")
-                : DEFAULT_SEQUENTIAL;
-        boolean parents = parameters.containsKey("parents") ? (Boolean) parameters.get("parents") : DEFAULT_PARENTS;
-        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
+            String path = (String) parameters.get("path");
+            String data = parameters.containsKey("data") ? (String) parameters.get("data") : DEFAULT_DATA;
+            String acl = parameters.containsKey("acl") ? (String) parameters.get("acl") : DEFAULT_ACL;
+            boolean ephemeral = parameters.containsKey("ephemeral") ? (Boolean) parameters.get("ephemeral")
+                    : DEFAULT_EPHEMERAL;
+            boolean sequential = parameters.containsKey("sequential") ? (Boolean) parameters.get("sequential")
+                    : DEFAULT_SEQUENTIAL;
+            boolean parents = parameters.containsKey("parents") ? (Boolean) parameters.get("parents") : DEFAULT_PARENTS;
+            boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
             byte[] byteData = data.getBytes();
 
             List<ACL> aclObj = Ids.OPEN_ACL_UNSAFE;
@@ -127,6 +126,12 @@ public class CreateCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

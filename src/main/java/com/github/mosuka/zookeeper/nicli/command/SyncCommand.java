@@ -22,8 +22,6 @@ import org.apache.zookeeper.AsyncCallback;
 import org.apache.zookeeper.ZooKeeper;
 
 public class SyncCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
-
     public SyncCommand() {
         this("sync");
     }
@@ -34,20 +32,26 @@ public class SyncCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
+            String path = (String) parameters.get("path");
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
             zk.sync(path, new AsyncCallback.VoidCallback() {
                 public void processResult(int rc, String path, Object ctx) {
-                    System.out.println("Sync returned " + rc);
+                    // System.out.println("Sync returned " + rc);
                 }
             }, null);
 
             setStatus(Command.STATUS_SUCCESS);
             setMessage(Command.SUCCESS_MESSAGE);
         } catch (IllegalArgumentException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

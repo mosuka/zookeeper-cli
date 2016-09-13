@@ -34,16 +34,24 @@ public class AddAuthCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String scheme = parameters.containsKey("scheme") ? (String) parameters.get("scheme") : DEFAULT_SCHEME;
-        String auth = parameters.containsKey("auth") ? (String) parameters.get("auth") : DEFAULT_AUTH;
+        try {
+            String scheme = (String) parameters.get("scheme");
+            String auth = (String) parameters.get("auth");
 
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
-        byte[] authByte = auth.getBytes();
+            byte[] authByte = auth.getBytes();
 
-        zk.addAuthInfo(scheme, authByte);
+            zk.addAuthInfo(scheme, authByte);
 
-        setStatus(Command.STATUS_SUCCESS);
-        setMessage(Command.SUCCESS_MESSAGE);
+            setStatus(Command.STATUS_SUCCESS);
+            setMessage(Command.SUCCESS_MESSAGE);
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        }
     }
 }

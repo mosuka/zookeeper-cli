@@ -155,7 +155,6 @@ public class Command implements CommandImpl {
         try {
             connect(server, timeout);
             run(parameters);
-            close();
         } catch (IOException e) {
             setStatus(STATUS_ERROR);
             setMessage(e.getMessage());
@@ -163,6 +162,12 @@ public class Command implements CommandImpl {
             setStatus(STATUS_ERROR);
             setMessage(e.getMessage());
         } finally {
+            try {
+                close();
+            } catch (InterruptedException e) {
+                setStatus(STATUS_ERROR);
+                setMessage(e.getMessage());
+            }
             output(parameters, withRequest, prettyPrint);
         }
 

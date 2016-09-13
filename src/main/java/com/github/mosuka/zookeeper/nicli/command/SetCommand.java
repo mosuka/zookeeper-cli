@@ -16,7 +16,6 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.zookeeper.KeeperException;
@@ -26,8 +25,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.StatUtil;
 
 public class SetCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
-    public static final String DEFAULT_DATA = "";
     public static final int DEFAULT_VERSION = -1;
     public static final boolean DEFAULT_WITH_STAT = false;
 
@@ -41,24 +38,21 @@ public class SetCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        Map<String, Object> statMap = new LinkedHashMap<String, Object>();
-
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        String data = parameters.containsKey("data") ? (String) parameters.get("data") : DEFAULT_DATA;
-        int version = parameters.containsKey("version") ? (Integer) parameters.get("version") : DEFAULT_VERSION;
-        boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
-                : DEFAULT_WITH_STAT;
-
         try {
+            String path = (String) parameters.get("path");
+            String data = (String) parameters.get("data");
+            int version = parameters.containsKey("version") ? (Integer) parameters.get("version") : DEFAULT_VERSION;
+            boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
+                    : DEFAULT_WITH_STAT;
+
             ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
             byte[] dataByte = data.getBytes();
 
             Stat stat = zk.setData(path, dataByte, version);
-            statMap = StatUtil.stat2Map(stat);
 
-            if (!statMap.isEmpty() && withStat) {
-                putResponse("stat", statMap);
+            if (stat != null && withStat) {
+                putResponse("stat", StatUtil.stat2Map(stat));
             }
 
             setStatus(Command.STATUS_SUCCESS);
@@ -67,6 +61,12 @@ public class SetCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

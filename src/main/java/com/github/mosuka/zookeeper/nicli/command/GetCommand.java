@@ -16,7 +16,6 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.zookeeper.KeeperException;
@@ -26,7 +25,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.StatUtil;
 
 public class GetCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_WATCH = false;
     public static final boolean DEFAULT_WITH_STAT = false;
 
@@ -40,24 +38,20 @@ public class GetCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        Map<String, Object> statMap = new LinkedHashMap<String, Object>();
-
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
-        boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
-                : DEFAULT_WITH_STAT;
-
         try {
+            String path = (String) parameters.get("path");
+            boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
+            boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
+                    : DEFAULT_WITH_STAT;
+
             ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
             Stat stat = new Stat();
             byte data[] = zk.getData(path, watch, stat);
-            data = (data == null) ? "null".getBytes() : data;
-            statMap = StatUtil.stat2Map(stat);
 
-            putResponse("data", new String(data));
-            if (!statMap.isEmpty() && withStat) {
-                putResponse("stat", statMap);
+            putResponse("data", data == null ? null : new String(data));
+            if (stat != null && withStat) {
+                putResponse("stat", StatUtil.stat2Map(stat));
             }
 
             setStatus(Command.STATUS_SUCCESS);
@@ -66,6 +60,12 @@ public class GetCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

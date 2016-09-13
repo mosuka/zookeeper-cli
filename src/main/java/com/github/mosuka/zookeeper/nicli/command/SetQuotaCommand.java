@@ -25,7 +25,6 @@ import org.apache.zookeeper.ZooKeeper;
 import com.github.mosuka.zookeeper.nicli.util.QuotaUtil;
 
 public class SetQuotaCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final long DEFAULT_BYTES = -1L;
     public static final int DEFAULT_NUM_NODES = -1;
 
@@ -39,13 +38,14 @@ public class SetQuotaCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        long bytes = parameters.containsKey("bytes") ? (Long) parameters.get("bytes") : DEFAULT_BYTES;
-        int numNodes = parameters.containsKey("num_nodes") ? (Integer) parameters.get("num_nodes") : DEFAULT_NUM_NODES;
-
-        ZooKeeper zk = getZookeeperConnection().getZooKeeper();
-
         try {
+            String path = (String) parameters.get("path");
+            long bytes = parameters.containsKey("bytes") ? (Long) parameters.get("bytes") : DEFAULT_BYTES;
+            int numNodes = parameters.containsKey("num_nodes") ? (Integer) parameters.get("num_nodes")
+                    : DEFAULT_NUM_NODES;
+
+            ZooKeeper zk = getZookeeperConnection().getZooKeeper();
+
             if (parameters.containsKey("bytes")) {
                 QuotaUtil.createQuota(zk, path, bytes, -1);
             } else if (parameters.containsKey("num_nodes")) {
@@ -65,6 +65,12 @@ public class SetQuotaCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (IOException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }

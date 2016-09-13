@@ -16,7 +16,6 @@
  */
 package com.github.mosuka.zookeeper.nicli.command;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.apache.zookeeper.data.Stat;
 import com.github.mosuka.zookeeper.nicli.util.StatUtil;
 
 public class LsCommand extends Command {
-    public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_WATCH = false;
     public static final boolean DEFAULT_WITH_STAT = false;
 
@@ -42,28 +40,27 @@ public class LsCommand extends Command {
 
     @Override
     public void run(Map<String, Object> parameters) {
-        List<String> children = new ArrayList<String>();
         Map<String, Object> statMap = new LinkedHashMap<String, Object>();
 
-        String path = parameters.containsKey("path") ? (String) parameters.get("path") : DEFAULT_PATH;
-        boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
-        boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
-                : DEFAULT_WITH_STAT;
-
         try {
+            String path = (String) parameters.get("path");
+            boolean watch = parameters.containsKey("watch") ? (Boolean) parameters.get("watch") : DEFAULT_WATCH;
+            boolean withStat = parameters.containsKey("with_stat") ? (Boolean) parameters.get("with_stat")
+                    : DEFAULT_WITH_STAT;
+
             ZooKeeper zk = getZookeeperConnection().getZooKeeper();
 
+            Stat stat = new Stat();
+            List<String> children = null;
             if (withStat) {
-                Stat stat = new Stat();
                 children = zk.getChildren(path, watch, stat);
-                statMap = StatUtil.stat2Map(stat);
             } else {
                 children = zk.getChildren(path, watch);
             }
 
             putResponse("children", children);
-            if (!statMap.isEmpty()) {
-                putResponse("stat", statMap);
+            if (stat != null && withStat) {
+                putResponse("stat", StatUtil.stat2Map(stat));
             }
 
             setStatus(Command.STATUS_SUCCESS);
@@ -72,6 +69,12 @@ public class LsCommand extends Command {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         } catch (InterruptedException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (ClassCastException e) {
+            setStatus(Command.STATUS_ERROR);
+            setMessage(e.getMessage());
+        } catch (NullPointerException e) {
             setStatus(Command.STATUS_ERROR);
             setMessage(e.getMessage());
         }
