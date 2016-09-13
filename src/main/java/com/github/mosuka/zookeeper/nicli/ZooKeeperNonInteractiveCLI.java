@@ -37,6 +37,7 @@ import com.github.mosuka.zookeeper.nicli.command.StatCommand;
 import com.github.mosuka.zookeeper.nicli.command.SyncCommand;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
@@ -46,7 +47,7 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class ZooKeeperNonInteractiveCLI {
     public static void main(String[] args) {
-        ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("java zookeeper-cli.jar");
+        ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("zkNiCli.sh").version("0.1.3");
         argumentParser.addArgument("-s", "--server").type(String.class).setDefault(Command.DEFAULT_SERVER)
                 .help("specify ZooKeeper host and port. ex) localhost:2181");
         argumentParser.addArgument("-t", "--timeout").type(Integer.class).setDefault(Command.DEFAULT_TIMEOUT)
@@ -55,6 +56,7 @@ public class ZooKeeperNonInteractiveCLI {
                 .action(storeTrue()).help("includes the request along with the data.");
         argumentParser.addArgument("-p", "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
                 .action(storeTrue()).help("pretty print.");
+        argumentParser.addArgument("-v", "--version").action(Arguments.version()).help("show version.");
 
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
 
