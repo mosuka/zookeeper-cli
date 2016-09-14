@@ -49,13 +49,13 @@ public class ZooKeeperNonInteractiveCLI {
     public static void main(String[] args) {
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("zkNiCli.sh").version("0.1.3");
         argumentParser.addArgument("-s", "--server").type(String.class).setDefault(Command.DEFAULT_SERVER)
-                .help("specify ZooKeeper host and port. ex) localhost:2181");
-        argumentParser.addArgument("-t", "--timeout").type(Integer.class).setDefault(Command.DEFAULT_TIMEOUT)
-                .help("specify session timeout[ms].");
+                .help("specify ZooKeeper host and port. default is " + Command.DEFAULT_SERVER);
+        argumentParser.addArgument("-t", "--timeout").type(Integer.class).setDefault(Command.DEFAULT_TIMEOUT).help(
+                "specify session timeout[ms] to ZooKeeper. default is " + String.valueOf(Command.DEFAULT_TIMEOUT));
         argumentParser.addArgument("-r", "--with-request").type(Boolean.class).setDefault(Command.DEFAULT_WITH_REQUEST)
-                .action(storeTrue()).help("includes the request along with the data.");
+                .action(storeTrue()).help("includes the request along with the result.");
         argumentParser.addArgument("-p", "--pretty-print").type(Boolean.class).setDefault(Command.DEFAULT_PRETTY_PRINT)
-                .action(storeTrue()).help("pretty print.");
+                .action(storeTrue()).help("format JSON to human-readable.");
         argumentParser.addArgument("-v", "--version").action(Arguments.version()).help("show version.");
 
         Subparsers subpersers = argumentParser.addSubparsers().title("Available Commands").metavar("COMMAND");
@@ -91,7 +91,7 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("specify the data to be registered in the znode.");
         createCommandSubparser.addArgument("acl").metavar("ACL").type(String.class)
                 .setDefault(CreateCommand.DEFAULT_ACL).nargs("?")
-                .help("specify the access control list to be registered in the znode.");
+                .help("specify the ACL to be registered in the znode.");
         createCommandSubparser.addArgument("-e", "--ephemeral").type(Boolean.class)
                 .setDefault(CreateCommand.DEFAULT_EPHEMERAL).action(storeTrue()).help("set create mode to ephemeral.");
         createCommandSubparser.addArgument("-s", "--sequential").type(Boolean.class)
@@ -99,7 +99,7 @@ public class ZooKeeperNonInteractiveCLI {
                 .help("set create mode to sequential.");
         createCommandSubparser.addArgument("-p", "--parents").type(Boolean.class)
                 .setDefault(CreateCommand.DEFAULT_PARENTS).action(storeTrue())
-                .help("Create intermediate znode as required.");
+                .help("create intermediate znode as required.");
         createCommandSubparser.addArgument("-w", "--watch").type(Boolean.class).setDefault(CreateCommand.DEFAULT_WATCH)
                 .action(storeTrue()).help("enable watcher.");
 
